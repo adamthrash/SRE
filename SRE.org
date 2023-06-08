@@ -1,0 +1,1468 @@
+#+title: SRE Workshop Reference
+#+author: Adam Thrash
+#+options: -:nil \n:nil num:nil H:6 toc:2 ^:{}
+#+html_head: <link rel="stylesheet" type="text/css" href="https://gongzhitaao.org/orgcss/org.css"/>
+#+html_head: <link rel="stylesheet" type="text/css" href="style.css"/>
+#+html_head: <link href="prism.css" rel="stylesheet" />
+#+html_head: <script src="prism.js"></script>
+
+#+begin_src emacs-lisp :exports none :results silent
+(defun rasmus/org-html-wrap-blocks-in-code (src backend info)
+  "Wrap a source block in <pre><code class=\"lang\">.</code></pre>"
+  (when (org-export-derived-backend-p backend 'html)
+    (replace-regexp-in-string
+     "\\(</pre>\\)" "</code>\n\\1"
+     (replace-regexp-in-string "<pre class=\"src src-\\([^\"]*?\\)\">"
+                               "<pre>\n<code class=\"lang-\\1\">\n" src))))
+
+(add-to-list 'org-export-filter-src-block-functions
+             'rasmus/org-html-wrap-blocks-in-code)
+
+(setq org-html-htmlize-output-type nil)
+(setq org-html-table-caption-above nil)
+#+end_src
+
+#+begin_src css :tangle presentation/style.css  :exports none
+.org-src-container {
+     border: 0;
+     box-shadow: none;
+     margin: 0;
+     padding: 0
+}
+ .org-src-container pre {
+     margin: 0.5em 0 0 0 !important;
+     padding: 0;
+     border-radius: 0px;
+}
+ .org-src-container pre.language-output{
+     margin: 0 !important;
+     background: #e3e2e1;
+}
+ kbd {
+     padding: 2px 5px;
+     margin: auto 1px;
+     border: 1px solid #ddd;
+     border-radius: 3px;
+     background-clip: padding-box;
+     color: #333;
+     font-size: 80%;
+}
+ .accordion {
+     background-color: #eee;
+     color: #444;
+     cursor: pointer;
+     padding: 18px;
+     width: 100%;
+     border: none;
+     text-align: left;
+     outline: none;
+     font-size: 15px;
+     transition: 0.4s;
+     font-family: Helvetica,sans-serif
+}
+ .active, .accordion:hover {
+     background-color: #ccc;
+}
+ .panel {
+     padding: 0px;
+     display: none;
+     background-color: white;
+     overflow: hidden;
+}
+ table {
+     width: 100%;
+     font-family: Helvetica,sans-serif
+}
+ table {
+    border: 2px solid #ddd !important;
+}
+ thead {
+    border-bottom: 2px solid #ddd !important;
+}
+ thead tr {
+    background-color: #e1e1e1;
+}
+ tbody tr {
+    border: 1px solid #ddd !important;
+}
+ th {
+     border-left: 1px solid #eee;
+     border-right: 1px solid #bbb;
+     white-space: nowrap;
+}
+ td {
+     border-left: 1px solid #ddd;
+     border-right: 1px solid #ddd;
+}
+ tr:nth-child(even) {
+     background-color: #f2f2f2;
+}
+ .figure img {
+     width: 50%;
+     margin: 0 auto;
+     transition: 0.2s
+}
+ .figure img:hover {
+     width: 90%;
+}
+ .figure p, table caption {
+    font-style: italic
+}
+ .figure-number, .table-number {
+    font-weight: bold
+}
+
+#+end_src
+
+#+begin_src txt :tangle .gitignore :exports none
+SRE.html
+.DS_Store
+pdf/
+#+end_src
+
+#+begin_src shell  :exports none :results silent
+sed -e 's|\./presentation/||g' SRE.html > presentation/index.html
+#+end_src
+
+#+begin_src yaml :tangle pdf/metadata.yml :exports none
+---
+lang: en-US
+title: SRE Workshop Reference
+author: Adam Thrash
+creator: Adam Thrash
+description: Reference document containing material covered at SRE Atlas Workshop
+style: style.css
+---
+#+end_src
+
+#+begin_src shell  :exports none :results silent
+wget https://gongzhitaao.org/orgcss/org.css
+cat org.css ../presentation/style.css > style.css
+sed -e 's|\./presentation/|../presentation/|g' SRE.html > pdf/index.html
+
+pandoc pdf/index.html \
+    --metadata-file=pdf/metadata.yml \
+    --pdf-engine=weasyprint \
+    -o pdf/SRE_Workshop_Reference.pdf
+#+end_src
+
+[fn:benchmark] A. Hatem, D. Bozdağ, A. E. Toland, and Ü. V. Çatalyürek, "Benchmarking short sequence mapping tools," /BMC Bioinformatics/, vol. 14, no. 1, p. 184, Jun. 2013, [[https://doi.org/10.1186/1471-2105-14-184][doi:10.1186/1471-2105-14-184]].
+[fn:combine] https://combine-lab.github.io/salmon/getting_started/
+
+* Introduction to Atlas
+** High Performance Computing
+
+High performance computing refers to the use of *computing clusters* to process
+large datasets and analyze complex problems. A *computing cluster* is a network
+of computers, often identically configured, and a *node* is a single computer in a
+cluster. A node has most of the same parts as a desktop or laptop computer. It
+has memory/RAM, storage, and a processor/CPU (or processors).
+
+*** Use Cases
+
+**** Remote Execution
+
+In the screenshot below, the author of the tweet began some sort of analysis
+while at work, but the analysis didn't complete before it was time to leave work
+and go home. While there are ways to keep a laptop from suspending with the lid
+closed, you still need to manage the laptop's temperature, so you can't just
+close it and leave it running in a backpack or bag.
+
+#+caption: An image of a laptop running Rstudio while buckled into a car seat
+[[./presentation/media/IMG_2304.JPG]]
+
+When I was a graduate student without access to HPC resources, I started an
+analysis of network traffic data on my laptop. It ran all day, and I also had to
+buckle my laptop in for the short drive home. The analysis ran all afternoon as
+well. Before I went to sleep, I disabled every option that would put my laptop
+to sleep, turned off all of its backlights, and went to sleep. The analysis was
+/still/ running the next morning. In an attempt to cool itself, my laptop had kept
+its fans running all night, and one of the fans had broken in the process. If
+I'd had access to HPC resources, then I could have submitted my analysis to the
+cluster and let it run without having to worry about these kinds of issues.
+
+**** Power
+
+A node is usually more powerful than a standard desktop or laptop. The table
+below compares the author's machine, a MacBook Pro purchased in late 2021, to an
+Atlas compute node.
+
+#+caption: Comparison of Laptop to Atlas Node
+| Specification             | MacBook Pro | Atlas Compute Node                               |
+|---------------------------+-------------+--------------------------------------------------|
+| Processor Cores           | 10          | 48                                               |
+| Graphics Processing Cores | 16          |                                                  |
+| Memory (gigabytes)        | 16          | 384                                              |
+| Storage (gigabytes)       | 1000        | 2000 (local, plus access to a shared filesystem) |
+#+caption: Macbook Pro versus standard Atlas node
+
+There are many different things you can do with Atlas to create complex
+pipelines and workflows, but if you never do those and only ever submit one job
+at a time to a single node, you will likely benefit from the node's increased
+speed and power.
+
+The following image, taken from a comparison of bioinformatics tools[fn:benchmark], compares
+two methods of parallelization. In the first comparison, the tools were
+instructed to run with multiple threads. In the second, a helper tool was used
+to partition the input data and start a new process of the analysis program for
+each partition of the data.
+
+#+caption: A Comparison of Bioinformatics Tools
+[[./presentation/media/12859_2012_Article_5940_Fig16_HTML.jpg]]
+
+On your personal machine, you may not have the resources to achieve speedups
+like this. If you devote all of your machine's resources to an analysis, it
+might become unusably slow. If you try to process data that it too large to fit
+into your machine's memory, you can cause your computer to become entirely
+unresponsive. By running your analysis on an Atlas node, you can usually avoid
+these issues.
+
+*** Split-Apply-Combine
+
+The multiprocessing example above runs on a single machine, but you can manually
+apply the same strategy to entire datasets. So long as your data can be split
+into independent chunks that require the same type of analysis, you can perform
+that split and analyze each chunk on a separate node. This kind of parallelism
+allows you to take full advantage of Atlas's resources.
+
+*** Message Passing Interface
+
+For datasets that must be analyzed as a whole but are too large to fit into the
+memory of any Atlas nodes, you may be able to use software built with the
+Message Passing Interface (MPI). These programs can use multiple nodes as a pool
+of resources, distributing work across the entire set of nodes much like the
+helper tool in the multiprocessing example.
+
+** Nodes of Atlas
+
+Atlas is a Cray CS500 Linux cluster. In total, it has
+
+- 11,520 Intel Xeon Platinum 8260 (Cascade Lake) processor cores
+- 101 terabytes of RAM
+- 8 NVIDIA V100 GPUs
+- Mellanox HDR100 Infiniband (100 Gb/s) interconnect
+
+Atlas is composed of 244 nodes, all of which contain two 2.40GHz Xeon Platinum
+8260 2nd Generation Scalable Processors with 24 cores each, for a total of 48
+cores per node. Only the login and data transfer nodes can be accessed from
+outside the Mississippi State University HPC^{2} network.
+
+#+caption: Nodes on Atlas
+| Node Type            | Number of Nodes | RAM (GB) | GPUs          |
+|----------------------+-----------------+----------+---------------|
+| Login                | 2               | 384      |               |
+| Data transfer        | 2               | 192      |               |
+| Compute              | 228             | 384      |               |
+| Compute (big memory) | 8               | 1536     |               |
+| Compute (GPU)        | 4               | 384      | 2 NVIDIA V100 |
+
+** SCINet Accounts
+
+*** Multifactor Authentication
+
+Logging into Atlas requires multifactor authentication. Each time you log into
+Atlas, you will first need to provide a verification code generated by a
+multifactor authentication app. These codes expire after a certain amount of
+time, meaning that you must have consistent access to your device in order to
+log into Atlas. The [[https://scinet.usda.gov/guides/access/mfa][multifactor authentication documentation]] recommends
+installing the Google Authenticator application on your Android or Apple device,
+but you can also use the Authy application on your computer.
+
+- [[https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&pli=1][Google
+  Authenticator on Google Play]]
+- [[https://apps.apple.com/us/app/google-authenticator/id388497605][Google
+  Authenticator on the App Store]]
+- [[https://authy.com/download/][Authy for Desktop]]
+
+Using the key or QR code provided in the email you received from the VRSC,
+follow along with [[https://scinet.usda.gov/guides/access/mfa][the instructions]] for your device provided by the SCINet
+documentation.
+
+*** Password Expiration
+
+Passwords expire after 60 days. You can still log into Atlas with an expired
+password, but you will be prompted to change your password immediately.
+
+*** Account Help
+
+The VRSC manages SCINet accounts, not Mississippi State University. For help
+with your account or if you have forgotten your password, you can email the VRSC
+at [[mailto:scinet_vrsc@usda.gov?subject=Password%20Reset][scinet_vrsc@usda.gov]]
+
+** Logging in with SSH
+
+=ssh= (Secure Shell) is a tool used to log into remote machines and execute
+commands on those machines.
+
+*** First Login
+
+When you log into Atlas for the first time, you will use the temporary password
+that your received from the VRSC. Before you attempt to log in, make sure that
+you have that email ready and that you've set up either the Google Authenticator
+app on your smartphone or the Authy app on your desktop.
+
+*** Logging In
+
+The application that you use to log into Atlas varies between operating systems.
+On updated versions of Windows 10, you can use the Powershell application. For
+older versions of Windows, please refer to the [[https://scinet.usda.gov/guides/access/login#from-older-windows-versions][SCINet documentation for using
+PuTTY]]. On macOS, you can use Terminal. On Linux, you can use the terminal
+application that your distribution comes with or install one with your package
+manager.
+
+To log into Atlas, open the application appropriate for your operating system.
+On Windows, you can click the "Start" button and type "Powershell". You should
+see Powershell in the results. On macOS, you can [[https://support.apple.com/guide/mac-help/open-apps-with-launchpad-mh45840/mac][use the Launchpad]], or you can
+activate Spotlight (⌘ + Space by default) and type "Terminal" to find the
+application. On a Linux system, there is likely some sort of application menu or
+application search function; you should be able to find a terminal application
+there.
+
+Once you launch the application, you will likely see a black screen with white
+text. You should be able to type commands into the app if you've focused it by
+clicking on it. Type the command below, then press the Enter key.
+
+#+begin_src shell
+ssh user.name@atlas-login.hpc.msstate.edu
+#+end_src
+
+You should see this notice.
+
+#+begin_src output
+​*​*​*​*​*​*​*​*​*​* N O T I C E ​*​*​*​*​*​*​*​*​*​*
+
+This system is under the control of and/or the property of Mississippi State
+University (MSU).  It is for authorized use only.  By using this system, all
+users acknowledge notice of and agree to comply with all MSU and High
+Performance Computing Collaboratory (HPC2) policies governing use of
+information systems.
+
+Any use of this system and all files on this system may be intercepted,
+monitored, recorded, copied, audited, inspected, and disclosed to authorized
+university and law enforcement personnel, as well as authorized individuals of
+other organizations.  By using this system, the user consents to such
+interception, monitoring, recording, copying, auditing, inspection and
+disclosure at the discretion of authorized university personnel.
+
+Unauthorized, improper or negligent use of this system may result in
+administrative disciplinary action, up to and including termination, civil
+charges, criminal penalties, and/or other sanctions as determined by applicable
+law, MSU policies, HPC2 policies, law enforcement or other authorized State
+and Federal agencies.
+
+​*​*​*​*​*​*​*​*​*​* N O T I C E ​*​*​*​*​*​*​*​*​*​*
+#+end_src
+
+Below the notice, you will see a request for your verification code. When you
+type your code into this prompt, you won't see the characters appearing in the
+terminal.
+
+#+begin_src output
+(user.name@atlas-login.hpc.msstate.edu) Verification code:
+#+end_src
+
+Enter the 6-digit code from the Google Authenticator app or the Authy app. If
+the code is about to expire, wait until a new one is generated and use the new
+code. After entering the code, you will receive a prompt for your password. Just
+like when typing the verification code, you won't see the characters appearing
+in the terminal.
+
+#+begin_src output
+(user.name@atlas-login.hpc.msstate.edu) Password:
+#+end_src
+
+If this is your first time logging in, you will be asked to provide your
+temporary password again, then you will be asked to create a new password and
+verify it. The characters do not appear in the terminal as you type them.
+
+If you've done everything correctly, you will be logged into Atlas, and you'll
+see another notice.
+
+#+begin_src output
+NOTICE:
+
+Atlas is a cluster system running CentOS 7.8 configured as follows.
+
+240 nodes, 480 processors, 11,520 processor cores
+
+Node configuration:
+        48 cores (2X Xeon 8260 2.4 GHz [3.9 GHz turbo] 24 core processors)
+        384 GB RAM (12x 32GB DDR4-2933 2R RDIM)
+        1x Intel S4510 240GB SSD
+        1x Intel P4510 2TB U.2 NVMe SSD
+        1x Mellanox HDR100
+
+BigMem Nodes:
+        1.5TB RAM
+
+GPU Nodes:
+        2 Tesla V100 GPU; 384GB  RAM
+#+end_src
+
+Below this notice, you will find the Atlas prompt.
+
+#+begin_src shell
+[user.name@Atlas-login-2 ~]$
+#+end_src
+
+*** Addresses
+
+- Login Node :: =ssh user.name@Atlas-login.hpc.msstate.edu=
+- Data Transfer Node :: =ssh user.name@Atlas-dtn.hpc.msstate.edu=
+
+** Data Management
+
+*** Locations and Quotas
+
+Users on Atlas can store their files in a few different locations. Some of these
+locations are subject to quotas, restricting the amount of data that can be
+stored by a user in these locations. Other locations are not subject to a quota,
+but the data is deleted 90 days after its last access. Some locations are backed
+up and suitable for long term storage of important data.
+
+#+caption: Storage Locations
+| Location           | Quota | Backed Up | Deleted After 90 Days | Description                                                                                                       |
+|--------------------+-------+-----------+-----------------------+-------------------------------------------------------------------------------------------------------------------|
+| Juno               | no    | yes       | no                    | large, multi-petabyte ARS storage device                                                                          |
+| /90daydata/PROJNAME/ | no    | no        | yes                   | short-term storage for code, data, and intermediate results of computational jobs                                 |
+| /project/PROJNAME/   | yes   | no        | no                    | same purpose /90daydata/PROJNAME/, but only granted if needed (users should use Juno for long-term storage instead) |
+| /home/user.name    | 5GB   | yes       | no                    | used to store configuration and login files                                                                       |
+#+caption: Comparison of storage locations
+
+*** Transferring Data
+
+#+caption: Data management workflow on SCINet
+[[./presentation/media/data_management_sop-fig_1.png]]
+
+To get data onto Atlas, raw data from your local machine or some other source
+should first be transferred to your project space on Juno. Once the data is
+safely stored on Juno, you can transfer the data from Juno or your local machine
+to your project's storage space in /90daydata/ to run your analysis. When your
+analysis is complete, you can transfer any results you need to save back to Juno
+and your local machine, if needed.
+
+[[https://www.globus.org/][Globus]] is the recommended method for transferring data between SCINet systems.
+It provides a web interface that allows you to select a source and a destination
+and move data between them. SCINet provides a [[https://scinet.usda.gov/guides/data/datatransfer#globus-data-transfer][detailed guide]] to using Globus. In
+addition to using Globus to move data between SCINet systems, you can install
+[[https://www.globus.org/globus-connect-personal][Globus Connect Personal]], which allows you to transfer files between your local
+desktop or laptop and SCINet systems. Being able to access your machine via
+Globus can be helpful if you have raw data on your machine that you need to work
+with on Atlas or if the results of your analysis are most easily viewed on your
+local machine (visualizations, for example).
+
+- Atlas Globus Endpoint :: =msuhpc2#Atlas-dtn=
+- Ceres Globus Endpoint :: =Ceres DTN=
+- MSU HPCC Endpoint :: =msuhpc2#Transfer=
+
+You can also use =scp= (secure copy) to transfer files, usually small files or a
+single file. Using scp requires the same kind of authentication that logging
+into Atlas requires, and the commands look similar to the login commands. The
+SCINet [[https://scinet.usda.gov/guides/data/datatransfer#small-data-transfer-using-scp-and-rsync][guide to transferring data with scp]] lists these commands and some
+potential issues.
+
+** Software on Atlas
+
+*** Environment Modules
+
+[[https://lmod.readthedocs.io/en/latest/][LMOD]], an environment module system, is used to manage which software installed
+on Atlas is accessible to you. By using the various =module= commands, you can add
+and remove software from your shell environment. Environment modules allow you
+to easily select which version of software you want to use from among multiple
+installed versions of the software. So long as a version remains installed, you
+can always use an older version by specifying the version when you load the
+software. The list below explains common =module= commands.
+
+- =module list= :: Lists currently loaded modules in your environment
+- =module avail= :: Lists modules that you can load
+- =module spider= :: List all modules, including those that require you to load
+  some prerequisite module
+- =module load [module]= :: Loads a module into your environment
+- =module unload [module]= :: Removes a module from your environment
+- =module swap [module] [module]= :: Replaces the first provided module with the
+  second
+- =module help [module]= :: Provides information about the module
+
+In addition to the =module= commands, there is a shorter form using =ml=. Any
+command of the form =module command= can be replaced with =ml command=, but there
+are a few shortcuts provided by =ml=.
+
+#+caption: =module= vs =ml=
+| =module command=            | =ml command=      |
+|---------------------------+-----------------|
+| =module list=               | =ml=              |
+| =module load module_name=   | =ml module_name=  |
+| =module unload module_name= | =ml -module_name= |
+#+caption: =module= / =ml= equivalents
+
+The =ml= commands for loading and unloading software can be combined. For example,
+you can use =ml module1 -module2= to load =module1= and unload =module2=, rather than
+using =ml load= and =ml unload=.
+
+*** Containers
+
+Some software on Atlas is available via *containers*, which are packages of
+software that contain all of the code and dependencies necessary for the
+contained application to run in any environment. Software installed as a
+container can be seen in the list provided by =ml spider=. To see software
+installed as a container with =ml avail=, run =ml singularity= before running =ml
+avail=.
+
+In addition to the containers installed on Atlas, there are repositories, such
+as [[https://quay.io/organization/biocontainers][biocontainers]], that provide pre-built containers for commonly used software
+in a field. Downloading these containers can be simpler than downloading
+software and its dependencies and compiling it from source, since you may run
+into permission or compatibility issues that containers avoid.
+
+** Jobs on Atlas
+
+*** Requesting Resources and Running Jobs
+
+Atlas uses the Slurm Workload Manager as a scheduler and resource manager. Users
+either request resources and run interactive tasks or submit jobs to the queue.
+Both actions are done from one of the login nodes. When specifying the resources
+needed, users must specify the name of an account associated with their project.
+The following command will show you which accounts you may use.
+
+#+begin_src shell
+sacctmgr show associations where user=$USER format=account%20,qos%50
+#+end_src
+
+Users likely want to specify other options as well, such as the amount of RAM or
+the number of CPUs. If you don't specify, then your job runs with default
+parameters: 1 node using 1 core. To request resources for an interactive job,
+use the =salloc= command to request resources and then use those resources with
+=srun=. Resources for a non-interactive job submitted to the queue can be
+requested during the submission, either as part of the =sbatch= command or in the
+submitted script.
+
+*** Job Arrays
+
+Job arrays are a mechanism for managing a set of jobs that have identical
+resource requirements. For example, imagine that you have the following data.
+
+#+caption: Example Data Description
+| Sample       | File          |
+|--------------+---------------|
+| Sample One   | sample1.fastq |
+| Sample Two   | sample2.fastq |
+| Sample Three | sample3.fastq |
+
+In this case, you want to perform some task--for example, quality checking--on
+each sample independently. You could write three separate scripts that are
+exactly the same, except for which sample is being checked, or you could use a
+job array. When you submit a job to the queue, you can use =--array= and a range
+of numbers to specify that, for every job in the job array, the same resources
+should be requested and the same tasks executed. In this case, we could specify
+=--array 0-2=. Then, rather than specifying the name of the file to be checked by
+our quality assurance task, we can specify that the file checked should be the
+the n^{th} item from the beginning of our list of data, where /n/ is the job array
+number. =sample1.fastq= is the zeroth item from the beginning; =sample2.fastq= is
+the first item from the beginning; =sample3.fastq= is the second item from the
+beginning.
+
+** Example
+
+*** Overview
+
+- adapted from the COMBINE lab's tutorial[fn:combine]
+- download data
+- use =srun= to run one step of an analysis
+- use =sbatch= to submit a job array to run the second step of the analysis
+  several times on different data
+
+*** Download Data
+
+#+begin_src shell
+mkdir /home/user.name/training
+cd /home/user.name/training/
+
+curl ftp://ftp.ensemblgenomes.org/pub/plants/release-28/fasta/arabidopsis_thaliana/cdna/Arabidopsis_thaliana.TAIR10.28.cdna.all.fa.gz -o athal.fa.gz
+
+chmod +x download_data.sh
+./download_data.sh
+#+end_src
+
+- make directory =/home/user.name/training/=
+- change directory to =/home/user.name/training/=
+- download the a reference file from a URL and save it as =athal.fa.gz=
+- make sure the =download_data.sh= script is executable
+- run the download script (provided below)
+
+#+begin_src shell
+cd /home/user.name/training/
+for i in `seq 25 40`; do
+  mkdir -p data/DRR0161${i};
+  wget -P data/DRR0161${i} ftp://ftp.sra.ebi.ac.uk/vol1/fastq/DRR016/DRR0161${i}/DRR0161${i}_1.fastq.gz;
+  wget -P data/DRR0161${i} ftp://ftp.sra.ebi.ac.uk/vol1/fastq/DRR016/DRR0161${i}/DRR0161${i}_2.fastq.gz;
+done
+#+end_src
+
+- change directory to =/home/user.name/training/=
+- for all numbers /i/ from 25 to 40
+  - make a directory =data/DRR0161= + /i/
+  - download two files to that directory, replace /i/ with the appropriate number
+    from 25 to 40 to build the URL
+
+*** Indexing Transcriptome
+
+#+begin_src shell
+salloc -A sandbox
+#+end_src
+
+#+begin_src output
+salloc: Granted job allocation 292472
+salloc: Waiting for resource configuration
+salloc: Nodes Atlas-0042 are ready for job
+#+end_src
+
+- request default allocation using scinet account
+  - nodes: 1 node
+  - number of tasks: 1 core
+
+#+begin_src shell
+#!/usr/bin/env bash
+
+cd /home/user.name/training/
+hostname
+ml singularity salmon/1.3.0--hf69c8f4_0
+salmon index -t athal.fa.gz -i athal_index
+#+end_src
+
+- change to training directory
+- print the hostname to show that the command is being run on compute node and
+  not the login node
+- load =singularity= module and =salmon= module
+  - =salmon= module is accessible as a container, so =singularity= has to be loaded
+    first
+- run =salmon= command
+
+#+begin_src shell
+srun /home/user.name/training/index.sh
+#+end_src
+
+#+begin_src output
+Atlas-0042.HPC.MsState.Edu
+WARNING: Skipping mount /apps/singularity-3/singularity-3.7.1/var/singularity/mnt/session/etc/resolv.conf [files]: /etc/resolv.conf doesn't exist in container
+index ["athal_index"] did not previously exist  . . . creating it
+...
+#+end_src
+
+*** Running Salmon as a Job Array
+
+#+begin_src shell
+#!/usr/bin/env bash
+#SBATCH --account sandbox           # set correct account
+#SBATCH --nodes=1                   # request one node
+#SBATCH --cpus-per-task=8           # ask for 8 CPUs
+#SBATCH --time=0-00:30:00           # set job time to  30 minutes.
+#SBATCH --array=0-15                # run 16 jobs of this script
+#SBATCH --output=%x.%A_%a.log       # store output as jobname.jobid_arrayid.log
+#SBATCH --error=%x.%A_%a.err        # store output as jobname.jobid_arrayid.err
+#SBATCH --job-name="salmon_run"     # job name that will be shown in the queue
+
+declare -A rna_files
+rna_files['DRR016125']='data/DRR016125/DRR016125_1.fastq.gz data/DRR016125/DRR016125_2.fastq.gz'
+rna_files['DRR016126']='data/DRR016126/DRR016126_1.fastq.gz data/DRR016126/DRR016126_2.fastq.gz'
+rna_files['DRR016127']='data/DRR016127/DRR016127_1.fastq.gz data/DRR016127/DRR016127_2.fastq.gz'
+rna_files['DRR016128']='data/DRR016128/DRR016128_1.fastq.gz data/DRR016128/DRR016128_2.fastq.gz'
+rna_files['DRR016129']='data/DRR016129/DRR016129_1.fastq.gz data/DRR016129/DRR016129_2.fastq.gz'
+rna_files['DRR016130']='data/DRR016130/DRR016130_1.fastq.gz data/DRR016130/DRR016130_2.fastq.gz'
+rna_files['DRR016131']='data/DRR016131/DRR016131_1.fastq.gz data/DRR016131/DRR016131_2.fastq.gz'
+rna_files['DRR016132']='data/DRR016132/DRR016132_1.fastq.gz data/DRR016132/DRR016132_2.fastq.gz'
+rna_files['DRR016133']='data/DRR016133/DRR016133_1.fastq.gz data/DRR016133/DRR016133_2.fastq.gz'
+rna_files['DRR016134']='data/DRR016134/DRR016134_1.fastq.gz data/DRR016134/DRR016134_2.fastq.gz'
+rna_files['DRR016135']='data/DRR016135/DRR016135_1.fastq.gz data/DRR016135/DRR016135_2.fastq.gz'
+rna_files['DRR016136']='data/DRR016136/DRR016136_1.fastq.gz data/DRR016136/DRR016136_2.fastq.gz'
+rna_files['DRR016137']='data/DRR016137/DRR016137_1.fastq.gz data/DRR016137/DRR016137_2.fastq.gz'
+rna_files['DRR016138']='data/DRR016138/DRR016138_1.fastq.gz data/DRR016138/DRR016138_2.fastq.gz'
+rna_files['DRR016139']='data/DRR016139/DRR016139_1.fastq.gz data/DRR016139/DRR016139_2.fastq.gz'
+rna_files['DRR016140']='data/DRR016140/DRR016140_1.fastq.gz data/DRR016140/DRR016140_2.fastq.gz'
+
+declare -a samples=( 'DRR016125' 'DRR016126' 'DRR016127' 'DRR016128' 'DRR016129' 'DRR016130' 'DRR016131' 'DRR016132' 'DRR016133' 'DRR016134' 'DRR016135' 'DRR016136' 'DRR016137' 'DRR016138' 'DRR016139' 'DRR016140' )
+
+cd /home/user.name/training/
+
+ml singularity salmon/1.3.0--hf69c8f4_0
+
+SAMPLE=${samples[$SLURM_ARRAY_TASK_ID]}
+read -a FILES <<< ${rna_files[$SAMPLE]}
+
+salmon quant -i athal_index -l A \
+       -1 ${FILES[0]} \
+       -2 ${FILES[1]} \
+       -p $SLURM_CPUS_PER_TASK --validateMappings \
+       -o quants/$SAMPLE
+#+end_src
+
+- SBATCH directives
+- set up RNA files
+- set up sample names
+- change to the correct directory
+- load =singularity= and =salmon=
+- get sample from =$SLURM_ARRAY_TASK_ID=
+- get reads from =$rna_files=
+- run =salmon=
+
+#+begin_src shell
+sbatch salmon-run.sh
+#+end_src
+
+#+begin_src output
+Submitted batch job 292484
+#+end_src
+
+#+begin_src shell
+squeue --me
+#+end_src
+
+#+begin_src output
+      JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+ 292484_0     atlas salmon_r user.nam  R       0:03      1 Atlas-0047
+ 292484_1     atlas salmon_r user.nam  R       0:03      1 Atlas-0051
+ 292484_2     atlas salmon_r user.nam  R       0:03      1 Atlas-0060
+ 292484_3     atlas salmon_r user.nam  R       0:03      1 Atlas-0067
+ 292484_4     atlas salmon_r user.nam  R       0:03      1 Atlas-0074
+ 292484_5     atlas salmon_r user.nam  R       0:03      1 Atlas-0076
+ 292484_6     atlas salmon_r user.nam  R       0:03      1 Atlas-0079
+ 292484_7     atlas salmon_r user.nam  R       0:03      1 Atlas-0083
+ 292484_8     atlas salmon_r user.nam  R       0:03      1 Atlas-0131
+ 292484_9     atlas salmon_r user.nam  R       0:03      1 Atlas-0136
+292484_10     atlas salmon_r user.nam  R       0:03      1 Atlas-0144
+292484_11     atlas salmon_r user.nam  R       0:03      1 Atlas-0146
+292484_12     atlas salmon_r user.nam  R       0:03      1 Atlas-0149
+292484_13     atlas salmon_r user.nam  R       0:03      1 Atlas-0152
+292484_14     atlas salmon_r user.nam  R       0:03      1 Atlas-0156
+292484_15     atlas salmon_r user.nam  R       0:03      1 Atlas-0158
+#+end_src
+
+** Getting Help
+
+If you're running into issues using Atlas, then you can find answers to your
+questions in several different places.
+
+*** Email
+
+If you're having issues related to Atlas itself or software installed on Atlas,
+then you can email [[mailto:help-usda@hpc.msstate.edu][HPC2 at Mississippi State University
+(help-usda@hpc.msstate.edu)]].
+
+If your issues are related to your SCINet account, to a project, or to a storage
+quota, you can email [[mailto:scinet_vrsc@usda.gov][SCINet Virtual Research Support Core
+(scinet_vrsc@usda.gov)]].
+
+If you aren't sure who might be able to answer your question or if you have
+questions about this document, you can email the author of this document, [[mailto:thrash@igbb.msstate.edu][Adam
+Thrash (thrash@igbb.msstate.edu)]].
+
+*** Documentation
+
+The [[https://scinet.usda.gov/guide/quickstart][SCINet Quick Start]] contains more detailed guides on specific parts of the
+high-performance computing experience available through SCINet. Some parts of
+the guide may be more specific to Ceres (mainly software version numbers), but
+most parts will be applicable to Atlas as well.
+
+Additionally, the [[https://www.hpc.msstate.edu/computing/atlas/][Atlas documentation]] covers topics specific to Atlas in detail,
+including Atlas Open OnDemand, a web interface for the Atlas cluster.
+
+* Exercise
+
+** Logging In
+
+#+begin_src shell
+ssh user.name-login.hpc.msstate.edu
+#+end_src
+
+#+begin_src output
+​*​*​*​*​*​*​*​*​*​* N O T I C E ​*​*​*​*​*​*​*​*​*​*
+
+This system is under the control of and/or the property of Mississippi State
+University (MSU).  It is for authorized use only.  By using this system, all
+users acknowledge notice of and agree to comply with all MSU and High
+Performance Computing Collaboratory (HPC2) policies governing use of
+information systems.
+
+Any use of this system and all files on this system may be intercepted,
+monitored, recorded, copied, audited, inspected, and disclosed to authorized
+university and law enforcement personnel, as well as authorized individuals of
+other organizations.  By using this system, the user consents to such
+interception, monitoring, recording, copying, auditing, inspection and
+disclosure at the discretion of authorized university personnel.
+
+Unauthorized, improper or negligent use of this system may result in
+administrative disciplinary action, up to and including termination, civil
+charges, criminal penalties, and/or other sanctions as determined by applicable
+law, MSU policies, HPC2 policies, law enforcement or other authorized State
+and Federal agencies.
+
+​*​*​*​*​*​*​*​*​*​* N O T I C E ​*​*​*​*​*​*​*​*​*​*
+
+(user.name@atlas-login.hpc.msstate.edu) Verification code:
+(user.name@atlas-login.hpc.msstate.edu) Password:
+#+end_src
+
+** Directories
+
+*** Show Current Directory
+
+=pwd= prints the current working directory. It's useful for figuring out where you
+are.
+
+#+begin_src shell
+pwd
+#+end_src
+
+#+begin_src output
+/home/user.name
+#+end_src
+
+*** Changing Directories
+
+In this example, the working directory is the user's home folder.
+
+#+begin_src shell
+pwd
+#+end_src
+
+#+begin_src output
+/home/user.name
+#+end_src
+
+Using =cd=, you can change to a different directory. =cd= doesn't produce any output
+to confirm that you changed directories.
+
+#+begin_src shell
+cd /90daydata/shared/
+pwd
+#+end_src
+
+#+begin_src output
+/90daydata/shared/
+#+end_src
+
+*** Creating Directories
+
+Use =mkdir= to create new directories. By default, =mkdir= will produces errors if
+you try to create nested directories when the full path doesn't exist or if you
+try to create an already existing directory.
+
+#+begin_src shell
+mkdir exercise/test
+#+end_src
+
+#+begin_src output
+mkdir: cannot create directory ‘exercise/test’: No such file or directory
+#+end_src
+
+#+begin_src shell
+mkdir exercise
+#+end_src
+
+#+begin_src shell
+mkdir exercise
+#+end_src
+
+#+begin_src output
+mkdir: cannot create directory ‘exercise’: File exists
+#+end_src
+
+However, =mkdir -p= will handle both of these issues.
+
+#+begin_src shell
+# -p - no error if existing, make parent directories as needed
+mkdir -p exercise
+#+end_src
+
+*** Listing Directory Contents
+
+By default, =ls= shows the contents of the current working directory in a grid.
+
+#+begin_src shell
+ls
+#+end_src
+
+#+begin_src output
+exercise
+#+end_src
+
+Use =ls -lh= (or =ls -l -h=) to show them in a tabular format (=-l=) with
+human-readable size-information (=-h=).
+
+#+begin_src shell
+ls -lh
+#+end_src
+
+#+begin_src output
+total 44K
+drwxr-x--- 2 user.name user.name    10 Sep 20  2022 Desktop
+drwx------ 3 user.name user.name    49 Feb 22 08:48 Downloads
+drwxrwx--- 2 user.name user.name    10 May 24 10:43 exercise
+#+end_src
+
+Use =a= to show all files, including hidden files.
+
+#+begin_src shell
+ls -lha
+#+end_src
+
+#+begin_src output
+total 220K
+drwxr-xr-x   23 user.name user.name  4.0K May 24 10:43 .
+drwxr-xr-x 2070 root      root       72K  May 19 18:02 ..
+-rw-r-----    1 user.name user.name  2.4K Mar  9 11:19 .bashrc
+drwxrwx---    2 user.name user.name    10 May 24 10:43 exercise
+#+end_src
+
+Provide a path to show the contents of that directory instead of the contents of
+the current directory.
+
+#+begin_src shell
+ls -lha exercise/
+#+end_src
+
+#+begin_src output
+total 0
+drwxrwx--- 3 user.name user.name 24 May 24 13:02 test
+#+end_src
+
+*** Remove Directories
+
+You can use =rm= to remove files or directories. By default, =rm= will not remove
+directories. Files and directories removed with =rm= are *gone*, so be very careful
+when you use =rm= to remove something, as you cannot recover it.
+
+#+begin_src shell
+rm exercise
+#+end_src
+
+#+begin_src output
+rm: cannot remove ‘exercise/’: Is a directory
+#+end_src
+
+=rm -d= will remove empty directories.
+
+#+begin_src shell
+# -d, --dir - remove empty directories
+rm -d exercise
+#+end_src
+
+=rm -r= will remove directories and their contents.
+
+#+begin_src shell
+mkdir -p exercise/
+# -r, -R, --recursive - remove directories and their contents recursively
+rm -r exercise
+#+end_src
+
+** Creating Files
+*** On Your Computer
+
+You can use programming text editors such as [[http://www.sublimetext.com][Sublime Text]] or [[https://code.visualstudio.com][VS Code]] to create
+scripts on your computer. Once you've created a script, you can use [[https://www.globus.org/globus-connect-personal][Globus
+Personal Connect]] to upload your script via [[https://app.globus.org][the Globus web interface]].
+
+#+begin_src shell
+#!/usr/bin/env bash
+echo "Hello, world!"
+#+end_src
+
+You can also use =scp=.
+
+#+begin_src shell
+scp hello.sh user.name@atlas-login.hpc.msstate.edu:/home/user.name/hello.sh
+#+end_src
+
+*** Creating a File on Atlas
+
+#+begin_export html
+You can use <code>nano</code> to create a file. Once you've written the contents of the file, you can press <kbd>Ctrl</kbd> + <kbd>x</kbd> to quit/write from <code>nano</code>.
+#+end_export
+
+#+begin_src shell
+nano hello.sh
+#+end_src
+
+Copy and paste the contents of this file into =nano=.
+
+#+begin_src shell
+#!/usr/bin/env bash
+echo "Hello, world!"
+#+end_src
+
+** Scripting
+*** Running Scripts
+
+You can execute a script by calling the interpreter with the script name as an
+argument.
+
+#+begin_src shell
+bash hello.sh
+#+end_src
+
+If the script is executable, you can call it using its path.
+
+#+begin_src
+./hello.sh
+#+end_src
+
+#+begin_src shell
+/home/user.name/hello.sh
+#+end_src
+
+*** Shebang
+
+The shebang specifies what interpreter the machine should use to execute a
+script. While the full path to an interpreter can be provided, as seen in the
+first example, using =#!/usr/bin/env interpreter_name=, where =interpreter_name= is
+the name of an interpreter as seen in the other examples, is a better practice.
+
+#+begin_src shell
+#!/bin/bash
+#+end_src
+
+#+begin_src shell
+#!/usr/bin/env bash
+#+end_src
+
+
+#+begin_src shell
+#!/usr/bin/env python3
+#+end_src
+
+
+#+begin_src shell
+#!/usr/bin/env Rscript
+#+end_src
+
+*** Variables
+
+In Bash scripts, variables are created by specifying a variable name, followed
+by an equals sign, followed by the value of the variable. For example, the
+following example prints, "Hello, world", replacing the =$NAME= variable with its
+value when it executes. (=echo= is a command that prints text to your screen.)
+
+#+begin_src shell
+#!/usr/bin/env bash
+NAME="world"
+echo "Hello, $NAME"
+#+end_src
+
+#+begin_src output
+Hello, world
+#+end_src
+
+=$1=, =$2=, =$3=, etc can be used in scripts to access command-line arguments.
+
+#+begin_src shell :tangle ~/Desktop/hello.sh
+echo "Hello, $1"
+#+end_src
+
+#+begin_src shell
+./hello.sh "world"
+#+end_src
+
+#+begin_src output
+Hello, world
+#+end_src
+
+** Jobs
+
+*** Resource Allocation
+
+- -N :: number of nodes needed
+- --mem :: amount of RAM needed per node
+- -n :: number of cores needed per node
+- --time :: amount of time needed per node
+- --account :: the account associated with the job
+
+*** Running Interactively
+
+An account is required to request resources, though other arguments can be added
+to the request.
+
+#+begin_src shell
+salloc -A sandbox <any other arguments>
+#+end_src
+
+#+begin_src output
+salloc: Granted job allocation 292472
+salloc: Waiting for resource configuration
+salloc: Nodes Atlas-0042 are ready for job
+#+end_src
+
+Using the =hostname= command to see the name of the machine on which the command
+was executed, you can confirm that =srun= is running on the node allocated above.
+
+#+begin_src shell
+hostname      # should display the login node
+srun hostname # should display a compute node
+#+end_src
+
+#+begin_src output
+Atlas-login-1.HPC.MsState.Edu
+Atlas-0042.HPC.MsState.Edu
+#+end_src
+
+*** Submitting to the Queue
+
+=#SBATCH= directives allow you to specify what kind of resources you need in the
+script you submit to the queue instead of specifying them on the command line.
+
+#+begin_src shell
+#!/usr/bin/env bash
+#SBATCH --account=sandbox   # set correct account
+#SBATCH --nodes=1           # request one node
+#SBATCH --cpus-per-task=8   # ask for 8 CPUs
+#SBATCH --time=0-00:30:00   # set job time to  30 minutes.
+#SBATCH --output=%x.%A.log  # store output as jobname.jobid.log
+#SBATCH --error=%x.%A.err   # store output as jobname.jobid.err
+#SBATCH --job-name="demo"   # job name that will be shown in the queue
+
+hostname
+#+end_src
+
+#+begin_src shell
+sbatch hostname.sh
+#+end_src
+
+#+begin_src output
+Submitted batch job 292484
+#+end_src
+
+=cat= can be used to print the contents of files. In this case, printing the
+output log shows the output of the script, which should be the hostname of the
+node on which the script ran.
+
+#+begin_src shell
+cat exercise_4.292484.log
+#+end_src
+
+#+begin_src output
+Atlas-0040.HPC.MsState.Edu
+#+end_src
+
+** Test Your Knowledge
+
+*** Goal
+
+The goal of this exercise is to put everything in the above examples together
+together in order to run an executable on an Atlas node. The executable's path
+will be provided below. The executable will fail to run
+
+- if it is run anywhere but an Atlas node
+- if you don't have permission to write to the executable's location
+
+*** Instructions
+
+- log in
+- make a directory somewhere like =/home/user.name/exercise=
+- copy the executable using the =cp= command
+  - =cp /home/user.name/SRE/exercise/atlas_exercise /home/user.name/exercise=
+- create a script that runs the executable
+  - with full path :: =/home/user.name/exercise/atlas_exercise=
+  - with relative path from =/home/user.name/exercise= directory :: =./atlas_exercise=
+- submit the script to Atlas with =sbatch= or use =salloc= and =srun=
+- check for the file =exercise.txt= in the directory you created with the contents below
+  - You have successfully run the executable on an Atlas node!
+
+** Solution
+
+#+begin_export html
+<button class="accordion">Show Solution</button>
+<div class="panel">
+#+end_export
+
+#+begin_src shell
+ssh user.name@atlas-login.hpc.msstate.edu
+mkdir -p $HOME/exercise/
+cp /home/user.name/SRE/exercise/atlas_exercise $HOME/exercise
+cd $HOME/exercise/
+chmod +x atlas_exercise
+sbatch exercise.sh
+#+end_src
+
+#+begin_src shell
+#!/usr/bin/env bash
+#SBATCH --account sandbox   # set correct account
+#SBATCH --output=%x.%A.log  # store output as jobname.jobid.log
+#SBATCH --error=%x.%A.err   # store output as jobname.jobid.err
+#SBATCH --job-name="exercise"   # job name that will be shown in the queue
+
+./atlas_exercise
+#+end_src
+
+#+begin_src shell
+ls -lh
+#+end_src
+
+#+begin_src output
+total 5.5M
+drwxrwx---  2 user.name user.name  149 Jun  6 10:23 .
+drwxr-xr-x 23 user.name user.name 4.0K Jun  6 10:21 ..
+-r-xr-x---  1 user.name user.name 5.5M Jun  6 10:22 atlas_exercise
+-rw-rw----  1 user.name user.name    0 Jun  6 10:23 exercise.12212806.err
+-rw-rw----  1 user.name user.name    0 Jun  6 10:23 exercise.12212806.log
+-rw-rw----  1 user.name user.name  291 Jun  6 10:22 exercise.sh
+-rw-rw----  1 user.name user.name   59 Jun  6 10:23 exercise.txt
+#+end_src
+
+#+begin_src shell
+cat exercise.txt
+#+end_src
+
+#+begin_src output
+You have successfully run the executable on an Atlas node!
+#+end_src
+
+#+begin_export html
+</div>
+<script>
+var acc = document.getElementsByClassName("accordion");
+var i;
+
+for (i = 0; i < acc.length; i++) {
+  acc[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    if (this.classList.contains("active")) {
+      this.innerText = "Hide Solution"
+    } else {
+      this.innerText = "Show Solution"
+    };
+
+    var panel = this.nextElementSibling;
+    if (panel.style.display === "block") {
+      panel.style.display = "none";
+    } else {
+      panel.style.display = "block";
+    }
+  });
+}
+</script>
+#+end_export
+* Commands Used in Workshop
+
+The following commands were run during the afternoon session of the Introduction
+to Atlas workshop. Some of this information is duplicated above, and some of
+these commands may not be commands you find useful.
+
+** Printing Working Directory
+
+#+begin_src shell
+pwd
+#+end_src
+
+** Change Directories
+
+#+begin_src shell
+cd                       # returns you to your home directory
+cd ../                   # moves you up one level
+cd /90daydata/
+cd /90daydata/shared/
+cd /90daydata/shared/user.name/
+cd /90daydata/shared/user.name/exercise/
+#+end_src
+
+** Making Directories
+
+#+begin_src shell
+mkdir user.name              # make a directory
+mkdir -p user.name/exercise/ # make a directory, creating all directories needed and ignoring errors if a directory already exists
+#+end_src
+
+** Listing Directory Contents
+
+#+begin_src shell
+ls                             # the most basic option
+ls user.name/                  # view contents of user.name folder
+ls -F                          # displays special characters at the end of a file to provide more information
+ls -l                          # display output in long format
+ls -lh                         # display output in long, human-readable format
+ls -lhF                        # combines -lh with -F
+ls -a                          # show hidden files
+ls -lha | less -S              # comines -lh and -a, pipes into less
+ls -lh .bashrc                 # checks specific file (.bashrc, in this case)
+ls -lh /project/ | grep past   # check a specific directory, then search results for a specific folder
+#+end_src
+
+** Creating Files
+
+=touch= creates empty files.
+
+#+begin_src shell
+touch exercise/test
+touch test
+#+end_src
+
+=nano= opens the specified file in an editor in the terminal.
+
+#+begin_src shell
+nano test.py
+nano test.sh
+nano test.sh
+nano .bashrc
+#+end_src
+
+** Removing Files and Directories
+
+#+begin_src shell
+rm test         # removes a file named test
+rm -d exercise/ # removes an empty directory named exercise
+rm -r exercise/ # removes a directory named exercise and all its contents
+#+end_src
+
+** View File Contents
+
+=cat= prints file contents to the console.
+
+#+begin_src shell
+cat test.sh
+#+end_src
+
+=less= opens a special interface for viewing file contents, which you can exit by
+pressing =q=. =less -S= prevents lines from wrapping and allows them to expand to
+the right forever.
+
+#+begin_src shell
+less -S .bashrc
+#+end_src
+
+** Modules
+
+=ml avail= shows which modules are available. =ml python/3.9.2= loads version 3.9.2
+of the =python= interpreter.
+
+#+begin_src shell
+ml avail
+ml python/3.9.2
+#+end_src
+
+** Running Various Executable Files
+
+#+begin_src shell
+./atlas_exercise # the program from the exercise
+./test.sh        # uses the interpreter specified in the file's shebang
+./test.py        # uses the interpreter specified in the file's shebang
+./test.sh        # uses the interpreter specified in the file's shebang
+bash test.sh     # uses bash
+sh test.sh       # uses sh
+#+end_src
+
+** SLURM
+
+This command from the Atlas documentation lists the accounts you can use to
+request resources.
+
+#+begin_src shell
+sacctmgr show associations where user=$USER format=account%20,qos%50
+#+end_src
+
+=salloc= requests resources according to the parameters you provide.
+
+#+begin_src shell
+salloc -A sandbox
+#+end_src
+
+=squeue= shows queued jobs. =squeue --me= shows your queued jobs.
+
+#+begin_src shell
+squeue --me
+#+end_src
+
+=srun= runs the script on resources allocated to you.
+
+#+begin_src shell
+srun test.sh
+#+end_src
+
+** Creating an Alias
+** Ownership, Permissions, and Groups
+
+=chgrp= changes the group of a file. This example changes the group of =.bashrc= to
+=scinet-users=.
+
+#+begin_src shell
+chgrp scinet-users .bashrc
+#+end_src
+
+=chmod= changes the permissions of a file. More information can be found [[https://www.tutorialspoint.com/unix/unix-file-permission.htm][here]].
+
+#+begin_src shell
+chmod g+rwx .bashrc     # give read, write, and execute permissions to the group for .bashrc
+chmod +x atlas_exercise # give execute permissions to user and group for atlas_exercise
+chmod +x test.py        # give execute permissions to user and group for test.py
+chmod +x test.sh        # give execute permissions to user and group for test.py
+chmod +x test.sh        # give execute permissions to user and group for test.py
+#+end_src
+
+=groups= can show to which groups a user belongs.
+
+#+begin_src shell
+groups user.name
+#+end_src
+
+** Interacting with the Terminal
+
+=clear= removes all content from the screen, though you can possibly scroll up to
+see it again, depending on your terminal.
+
+#+begin_src shell
+clear
+#+end_src
+
+=exit= logs you out of your current shell. If you are logged in to Atlas, it will
+log you out and return to your local shell.
+
+#+begin_src shell
+exit
+#+end_src
+
+=history= shows commands that you have previously typed, assuming your shell is
+configured to retain history. =grep= searches for the word provided. The "|"
+character, called "pipe", means that you are "piping" the command of =history= as
+input to the =grep= command.
+
+#+begin_src shell
+history | grep sacct
+history | grep source
+#+end_src
+
+=which= shows what command is run when you type the command. Using =which= is an
+easy way to make sure the program you want is available. For example, if you run
+=which python3= without first running =ml python/3.9.2=, you will receive an error.
+
+#+begin_src shell
+which bash
+which python
+which python3
+#+end_src
+
+Though not demonstrated in the workshop, you could do something like the =ls=
+example below. If you put this alias in your =.bashrc= file, you would be able to
+type =ls= and get the output of =ls -lh=.
+
+#+begin_src shell
+alias python=python3
+alias ls="ls -lh"
+#+end_src
+
+
+** Getting Help
+
+=man= provides a manual for the requested program. Many programs also have a =-h=
+option to print their help.
+
+#+begin_src shell
+man ls
+#+end_src
+
+** Python
+
+=ml python/3.9.2= loads version 3.9.2 of the =python= interpreter.
+
+#+begin_src shell
+python          # loads default python interpreter, which is python2
+ml python/3.9.2
+python3         # loads python3 interpreter
+python3 test.py # runs test.py using python3 interpreter
+#+end_src
+

@@ -1,0 +1,2619 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2023-06-08 Thu 16:23 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SRE Workshop Reference</title>
+<meta name="author" content="Adam Thrash" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<link rel="stylesheet" type="text/css" href="https://gongzhitaao.org/orgcss/org.css"/>
+<link rel="stylesheet" type="text/css" href="style.css"/>
+<link href="prism.css" rel="stylesheet" />
+<script src="prism.js"></script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">SRE Workshop Reference</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org2ef69fd">Introduction to Atlas</a>
+<ul>
+<li><a href="#orgb92210f">High Performance Computing</a></li>
+<li><a href="#orgdf3e555">Nodes of Atlas</a></li>
+<li><a href="#org77e6f45">SCINet Accounts</a></li>
+<li><a href="#org9f9e746">Logging in with SSH</a></li>
+<li><a href="#orgf61b89e">Data Management</a></li>
+<li><a href="#orgf1f9649">Software on Atlas</a></li>
+<li><a href="#orgded7862">Jobs on Atlas</a></li>
+<li><a href="#org4144432">Example</a></li>
+<li><a href="#org5970f2f">Getting Help</a></li>
+</ul>
+</li>
+<li><a href="#orgf151cce">Exercise</a>
+<ul>
+<li><a href="#org690afc2">Logging In</a></li>
+<li><a href="#org6c62fdf">Directories</a></li>
+<li><a href="#orga69d45d">Creating Files</a></li>
+<li><a href="#org81848a7">Scripting</a></li>
+<li><a href="#orge25b5fa">Jobs</a></li>
+<li><a href="#org35316c4">Test Your Knowledge</a></li>
+<li><a href="#orge6b6646">Solution</a></li>
+</ul>
+</li>
+<li><a href="#orgf64faa7">Commands Used in Workshop</a>
+<ul>
+<li><a href="#org8a18883">Printing Working Directory</a></li>
+<li><a href="#org73e9d84">Change Directories</a></li>
+<li><a href="#org6af200f">Making Directories</a></li>
+<li><a href="#orgf270bdf">Listing Directory Contents</a></li>
+<li><a href="#orgc60b476">Creating Files</a></li>
+<li><a href="#org0ec0c50">Removing Files and Directories</a></li>
+<li><a href="#org897de86">View File Contents</a></li>
+<li><a href="#orgea2e261">Modules</a></li>
+<li><a href="#orga5be7d6">Running Various Executable Files</a></li>
+<li><a href="#orga075947">SLURM</a></li>
+<li><a href="#org6c53f68">Creating an Alias</a></li>
+<li><a href="#org7120613">Ownership, Permissions, and Groups</a></li>
+<li><a href="#org91612ec">Interacting with the Terminal</a></li>
+<li><a href="#org051daea">Getting Help</a></li>
+<li><a href="#org938f436">Python</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org2ef69fd" class="outline-2">
+<h2 id="org2ef69fd">Introduction to Atlas</h2>
+<div class="outline-text-2" id="text-org2ef69fd">
+</div>
+<div id="outline-container-orgb92210f" class="outline-3">
+<h3 id="orgb92210f">High Performance Computing</h3>
+<div class="outline-text-3" id="text-orgb92210f">
+<p>
+High performance computing refers to the use of <b>computing clusters</b> to process
+large datasets and analyze complex problems. A <b>computing cluster</b> is a network
+of computers, often identically configured, and a <b>node</b> is a single computer in a
+cluster. A node has most of the same parts as a desktop or laptop computer. It
+has memory/RAM, storage, and a processor/CPU (or processors).
+</p>
+</div>
+
+<div id="outline-container-org5e4ee3c" class="outline-4">
+<h4 id="org5e4ee3c">Use Cases</h4>
+<div class="outline-text-4" id="text-org5e4ee3c">
+</div>
+<div id="outline-container-org62d21e9" class="outline-5">
+<h5 id="org62d21e9">Remote Execution</h5>
+<div class="outline-text-5" id="text-org62d21e9">
+<p>
+In the screenshot below, the author of the tweet began some sort of analysis
+while at work, but the analysis didn&rsquo;t complete before it was time to leave work
+and go home. While there are ways to keep a laptop from suspending with the lid
+closed, you still need to manage the laptop&rsquo;s temperature, so you can&rsquo;t just
+close it and leave it running in a backpack or bag.
+</p>
+
+
+<div id="orgf1d31b9" class="figure">
+<p><img src="media/IMG_2304.JPG" alt="IMG_2304.JPG" />
+</p>
+<p><span class="figure-number">Figure 1: </span>An image of a laptop running Rstudio while buckled into a car seat</p>
+</div>
+
+<p>
+When I was a graduate student without access to HPC resources, I started an
+analysis of network traffic data on my laptop. It ran all day, and I also had to
+buckle my laptop in for the short drive home. The analysis ran all afternoon as
+well. Before I went to sleep, I disabled every option that would put my laptop
+to sleep, turned off all of its backlights, and went to sleep. The analysis was
+<i>still</i> running the next morning. In an attempt to cool itself, my laptop had kept
+its fans running all night, and one of the fans had broken in the process. If
+I&rsquo;d had access to HPC resources, then I could have submitted my analysis to the
+cluster and let it run without having to worry about these kinds of issues.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org8619cef" class="outline-5">
+<h5 id="org8619cef">Power</h5>
+<div class="outline-text-5" id="text-org8619cef">
+<p>
+A node is usually more powerful than a standard desktop or laptop. The table
+below compares the author&rsquo;s machine, a MacBook Pro purchased in late 2021, to an
+Atlas compute node.
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-bottom"><span class="table-number">Table 1:</span> Comparison of Laptop to Atlas Node</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Specification</th>
+<th scope="col" class="org-right">MacBook Pro</th>
+<th scope="col" class="org-right">Atlas Compute Node</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">Processor Cores</td>
+<td class="org-right">10</td>
+<td class="org-right">48</td>
+</tr>
+
+<tr>
+<td class="org-left">Graphics Processing Cores</td>
+<td class="org-right">16</td>
+<td class="org-right">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Memory (gigabytes)</td>
+<td class="org-right">16</td>
+<td class="org-right">384</td>
+</tr>
+
+<tr>
+<td class="org-left">Storage (gigabytes)</td>
+<td class="org-right">1000</td>
+<td class="org-right">2000 (local, plus access to a shared filesystem)</td>
+</tr>
+</tbody>
+</table>
+<p>
+There are many different things you can do with Atlas to create complex
+pipelines and workflows, but if you never do those and only ever submit one job
+at a time to a single node, you will likely benefit from the node&rsquo;s increased
+speed and power.
+</p>
+
+<p>
+The following image, taken from a comparison of bioinformatics tools<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup>, compares
+two methods of parallelization. In the first comparison, the tools were
+instructed to run with multiple threads. In the second, a helper tool was used
+to partition the input data and start a new process of the analysis program for
+each partition of the data.
+</p>
+
+
+<div id="org50e4798" class="figure">
+<p><img src="media/12859_2012_Article_5940_Fig16_HTML.jpg" alt="12859_2012_Article_5940_Fig16_HTML.jpg" />
+</p>
+<p><span class="figure-number">Figure 2: </span>A Comparison of Bioinformatics Tools</p>
+</div>
+
+<p>
+On your personal machine, you may not have the resources to achieve speedups
+like this. If you devote all of your machine&rsquo;s resources to an analysis, it
+might become unusably slow. If you try to process data that it too large to fit
+into your machine&rsquo;s memory, you can cause your computer to become entirely
+unresponsive. By running your analysis on an Atlas node, you can usually avoid
+these issues.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org297508d" class="outline-4">
+<h4 id="org297508d">Split-Apply-Combine</h4>
+<div class="outline-text-4" id="text-org297508d">
+<p>
+The multiprocessing example above runs on a single machine, but you can manually
+apply the same strategy to entire datasets. So long as your data can be split
+into independent chunks that require the same type of analysis, you can perform
+that split and analyze each chunk on a separate node. This kind of parallelism
+allows you to take full advantage of Atlas&rsquo;s resources.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org8fda43f" class="outline-4">
+<h4 id="org8fda43f">Message Passing Interface</h4>
+<div class="outline-text-4" id="text-org8fda43f">
+<p>
+For datasets that must be analyzed as a whole but are too large to fit into the
+memory of any Atlas nodes, you may be able to use software built with the
+Message Passing Interface (MPI). These programs can use multiple nodes as a pool
+of resources, distributing work across the entire set of nodes much like the
+helper tool in the multiprocessing example.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgdf3e555" class="outline-3">
+<h3 id="orgdf3e555">Nodes of Atlas</h3>
+<div class="outline-text-3" id="text-orgdf3e555">
+<p>
+Atlas is a Cray CS500 Linux cluster. In total, it has
+</p>
+
+<ul class="org-ul">
+<li>11,520 Intel Xeon Platinum 8260 (Cascade Lake) processor cores</li>
+<li>101 terabytes of RAM</li>
+<li>8 NVIDIA V100 GPUs</li>
+<li>Mellanox HDR100 Infiniband (100 Gb/s) interconnect</li>
+</ul>
+
+<p>
+Atlas is composed of 244 nodes, all of which contain two 2.40GHz Xeon Platinum
+8260 2nd Generation Scalable Processors with 24 cores each, for a total of 48
+cores per node. Only the login and data transfer nodes can be accessed from
+outside the Mississippi State University HPC<sup>2</sup> network.
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-bottom"><span class="table-number">Table 2:</span> Nodes on Atlas</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Node Type</th>
+<th scope="col" class="org-right">Number of Nodes</th>
+<th scope="col" class="org-right">RAM (GB)</th>
+<th scope="col" class="org-left">GPUs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">Login</td>
+<td class="org-right">2</td>
+<td class="org-right">384</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Data transfer</td>
+<td class="org-right">2</td>
+<td class="org-right">192</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Compute</td>
+<td class="org-right">228</td>
+<td class="org-right">384</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Compute (big memory)</td>
+<td class="org-right">8</td>
+<td class="org-right">1536</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Compute (GPU)</td>
+<td class="org-right">4</td>
+<td class="org-right">384</td>
+<td class="org-left">2 NVIDIA V100</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-org77e6f45" class="outline-3">
+<h3 id="org77e6f45">SCINet Accounts</h3>
+<div class="outline-text-3" id="text-org77e6f45">
+</div>
+<div id="outline-container-orga344f6b" class="outline-4">
+<h4 id="orga344f6b">Multifactor Authentication</h4>
+<div class="outline-text-4" id="text-orga344f6b">
+<p>
+Logging into Atlas requires multifactor authentication. Each time you log into
+Atlas, you will first need to provide a verification code generated by a
+multifactor authentication app. These codes expire after a certain amount of
+time, meaning that you must have consistent access to your device in order to
+log into Atlas. The <a href="https://scinet.usda.gov/guides/access/mfa">multifactor authentication documentation</a> recommends
+installing the Google Authenticator application on your Android or Apple device,
+but you can also use the Authy application on your computer.
+</p>
+
+<ul class="org-ul">
+<li><a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&amp;pli=1">Google
+Authenticator on Google Play</a></li>
+<li><a href="https://apps.apple.com/us/app/google-authenticator/id388497605">Google
+Authenticator on the App Store</a></li>
+<li><a href="https://authy.com/download/">Authy for Desktop</a></li>
+</ul>
+
+<p>
+Using the key or QR code provided in the email you received from the VRSC,
+follow along with <a href="https://scinet.usda.gov/guides/access/mfa">the instructions</a> for your device provided by the SCINet
+documentation.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org64e7244" class="outline-4">
+<h4 id="org64e7244">Password Expiration</h4>
+<div class="outline-text-4" id="text-org64e7244">
+<p>
+Passwords expire after 60 days. You can still log into Atlas with an expired
+password, but you will be prompted to change your password immediately.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge3693ca" class="outline-4">
+<h4 id="orge3693ca">Account Help</h4>
+<div class="outline-text-4" id="text-orge3693ca">
+<p>
+The VRSC manages SCINet accounts, not Mississippi State University. For help
+with your account or if you have forgotten your password, you can email the VRSC
+at <a href="mailto:scinet_vrsc@usda.gov?subject=Password%20Reset">scinet_vrsc@usda.gov</a>
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9f9e746" class="outline-3">
+<h3 id="org9f9e746">Logging in with SSH</h3>
+<div class="outline-text-3" id="text-org9f9e746">
+<p>
+<code>ssh</code> (Secure Shell) is a tool used to log into remote machines and execute
+commands on those machines.
+</p>
+</div>
+
+<div id="outline-container-org0f31406" class="outline-4">
+<h4 id="org0f31406">First Login</h4>
+<div class="outline-text-4" id="text-org0f31406">
+<p>
+When you log into Atlas for the first time, you will use the temporary password
+that your received from the VRSC. Before you attempt to log in, make sure that
+you have that email ready and that you&rsquo;ve set up either the Google Authenticator
+app on your smartphone or the Authy app on your desktop.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org0f6a7ea" class="outline-4">
+<h4 id="org0f6a7ea">Logging In</h4>
+<div class="outline-text-4" id="text-org0f6a7ea">
+<p>
+The application that you use to log into Atlas varies between operating systems.
+On updated versions of Windows 10, you can use the Powershell application. For
+older versions of Windows, please refer to the <a href="https://scinet.usda.gov/guides/access/login#from-older-windows-versions">SCINet documentation for using
+PuTTY</a>. On macOS, you can use Terminal. On Linux, you can use the terminal
+application that your distribution comes with or install one with your package
+manager.
+</p>
+
+<p>
+To log into Atlas, open the application appropriate for your operating system.
+On Windows, you can click the &ldquo;Start&rdquo; button and type &ldquo;Powershell&rdquo;. You should
+see Powershell in the results. On macOS, you can <a href="https://support.apple.com/guide/mac-help/open-apps-with-launchpad-mh45840/mac">use the Launchpad</a>, or you can
+activate Spotlight (⌘ + Space by default) and type &ldquo;Terminal&rdquo; to find the
+application. On a Linux system, there is likely some sort of application menu or
+application search function; you should be able to find a terminal application
+there.
+</p>
+
+<p>
+Once you launch the application, you will likely see a black screen with white
+text. You should be able to type commands into the app if you&rsquo;ve focused it by
+clicking on it. Type the command below, then press the Enter key.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+ssh user.name@atlas-login.hpc.msstate.edu
+</code>
+</pre>
+</div>
+
+<p>
+You should see this notice.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-output">
+​*​*​*​*​*​*​*​*​*​* N O T I C E ​*​*​*​*​*​*​*​*​*​*
+
+This system is under the control of and/or the property of Mississippi State
+University (MSU).  It is for authorized use only.  By using this system, all
+users acknowledge notice of and agree to comply with all MSU and High
+Performance Computing Collaboratory (HPC2) policies governing use of
+information systems.
+
+Any use of this system and all files on this system may be intercepted,
+monitored, recorded, copied, audited, inspected, and disclosed to authorized
+university and law enforcement personnel, as well as authorized individuals of
+other organizations.  By using this system, the user consents to such
+interception, monitoring, recording, copying, auditing, inspection and
+disclosure at the discretion of authorized university personnel.
+
+Unauthorized, improper or negligent use of this system may result in
+administrative disciplinary action, up to and including termination, civil
+charges, criminal penalties, and/or other sanctions as determined by applicable
+law, MSU policies, HPC2 policies, law enforcement or other authorized State
+and Federal agencies.
+
+​*​*​*​*​*​*​*​*​*​* N O T I C E ​*​*​*​*​*​*​*​*​*​*
+</code>
+</pre>
+</div>
+
+<p>
+Below the notice, you will see a request for your verification code. When you
+type your code into this prompt, you won&rsquo;t see the characters appearing in the
+terminal.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-output">
+(user.name@atlas-login.hpc.msstate.edu) Verification code:
+</code>
+</pre>
+</div>
+
+<p>
+Enter the 6-digit code from the Google Authenticator app or the Authy app. If
+the code is about to expire, wait until a new one is generated and use the new
+code. After entering the code, you will receive a prompt for your password. Just
+like when typing the verification code, you won&rsquo;t see the characters appearing
+in the terminal.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-output">
+(user.name@atlas-login.hpc.msstate.edu) Password:
+</code>
+</pre>
+</div>
+
+<p>
+If this is your first time logging in, you will be asked to provide your
+temporary password again, then you will be asked to create a new password and
+verify it. The characters do not appear in the terminal as you type them.
+</p>
+
+<p>
+If you&rsquo;ve done everything correctly, you will be logged into Atlas, and you&rsquo;ll
+see another notice.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-output">
+NOTICE:
+
+Atlas is a cluster system running CentOS 7.8 configured as follows.
+
+240 nodes, 480 processors, 11,520 processor cores
+
+Node configuration:
+        48 cores (2X Xeon 8260 2.4 GHz [3.9 GHz turbo] 24 core processors)
+        384 GB RAM (12x 32GB DDR4-2933 2R RDIM)
+        1x Intel S4510 240GB SSD
+        1x Intel P4510 2TB U.2 NVMe SSD
+        1x Mellanox HDR100
+
+BigMem Nodes:
+        1.5TB RAM
+
+GPU Nodes:
+        2 Tesla V100 GPU; 384GB  RAM
+</code>
+</pre>
+</div>
+
+<p>
+Below this notice, you will find the Atlas prompt.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+[user.name@Atlas-login-2 ~]$
+</code>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org7cc8961" class="outline-4">
+<h4 id="org7cc8961">Addresses</h4>
+<div class="outline-text-4" id="text-org7cc8961">
+<dl class="org-dl">
+<dt>Login Node</dt><dd><code>ssh user.name@Atlas-login.hpc.msstate.edu</code></dd>
+<dt>Data Transfer Node</dt><dd><code>ssh user.name@Atlas-dtn.hpc.msstate.edu</code></dd>
+</dl>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf61b89e" class="outline-3">
+<h3 id="orgf61b89e">Data Management</h3>
+<div class="outline-text-3" id="text-orgf61b89e">
+</div>
+<div id="outline-container-org4fc51e2" class="outline-4">
+<h4 id="org4fc51e2">Locations and Quotas</h4>
+<div class="outline-text-4" id="text-org4fc51e2">
+<p>
+Users on Atlas can store their files in a few different locations. Some of these
+locations are subject to quotas, restricting the amount of data that can be
+stored by a user in these locations. Other locations are not subject to a quota,
+but the data is deleted 90 days after its last access. Some locations are backed
+up and suitable for long term storage of important data.
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-bottom"><span class="table-number">Table 3:</span> Storage Locations</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Location</th>
+<th scope="col" class="org-left">Quota</th>
+<th scope="col" class="org-left">Backed Up</th>
+<th scope="col" class="org-left">Deleted After 90 Days</th>
+<th scope="col" class="org-left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">Juno</td>
+<td class="org-left">no</td>
+<td class="org-left">yes</td>
+<td class="org-left">no</td>
+<td class="org-left">large, multi-petabyte ARS storage device</td>
+</tr>
+
+<tr>
+<td class="org-left"><i>90daydata/PROJNAME</i></td>
+<td class="org-left">no</td>
+<td class="org-left">no</td>
+<td class="org-left">yes</td>
+<td class="org-left">short-term storage for code, data, and intermediate results of computational jobs </td>
+</tr>
+
+<tr>
+<td class="org-left"><i>project/PROJNAME</i></td>
+<td class="org-left">yes</td>
+<td class="org-left">no</td>
+<td class="org-left">no</td>
+<td class="org-left">same purpose <i>90daydata/PROJNAME</i>, but only granted if needed (users should use Juno for long-term storage instead)</td>
+</tr>
+
+<tr>
+<td class="org-left">/home/user.name</td>
+<td class="org-left">5GB</td>
+<td class="org-left">yes</td>
+<td class="org-left">no</td>
+<td class="org-left">used to store configuration and login files</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-orga568730" class="outline-4">
+<h4 id="orga568730">Transferring Data</h4>
+<div class="outline-text-4" id="text-orga568730">
+
+<div id="org532b88b" class="figure">
+<p><img src="media/data_management_sop-fig_1.png" alt="data_management_sop-fig_1.png" />
+</p>
+<p><span class="figure-number">Figure 3: </span>Data management workflow on SCINet</p>
+</div>
+
+<p>
+To get data onto Atlas, raw data from your local machine or some other source
+should first be transferred to your project space on Juno. Once the data is
+safely stored on Juno, you can transfer the data from Juno or your local machine
+to your project&rsquo;s storage space in <i>90daydata</i> to run your analysis. When your
+analysis is complete, you can transfer any results you need to save back to Juno
+and your local machine, if needed.
+</p>
+
+<p>
+<a href="https://www.globus.org/">Globus</a> is the recommended method for transferring data between SCINet systems.
+It provides a web interface that allows you to select a source and a destination
+and move data between them. SCINet provides a <a href="https://scinet.usda.gov/guides/data/datatransfer#globus-data-transfer">detailed guide</a> to using Globus. In
+addition to using Globus to move data between SCINet systems, you can install
+<a href="https://www.globus.org/globus-connect-personal">Globus Connect Personal</a>, which allows you to transfer files between your local
+desktop or laptop and SCINet systems. Being able to access your machine via
+Globus can be helpful if you have raw data on your machine that you need to work
+with on Atlas or if the results of your analysis are most easily viewed on your
+local machine (visualizations, for example).
+</p>
+
+<dl class="org-dl">
+<dt>Atlas Globus Endpoint</dt><dd><code>msuhpc2#Atlas-dtn</code></dd>
+<dt>Ceres Globus Endpoint</dt><dd><code>Ceres DTN</code></dd>
+<dt>MSU HPCC Endpoint</dt><dd><code>msuhpc2#Transfer</code></dd>
+</dl>
+
+<p>
+You can also use <code>scp</code> (secure copy) to transfer files, usually small files or a
+single file. Using scp requires the same kind of authentication that logging
+into Atlas requires, and the commands look similar to the login commands. The
+SCINet <a href="https://scinet.usda.gov/guides/data/datatransfer#small-data-transfer-using-scp-and-rsync">guide to transferring data with scp</a> lists these commands and some
+potential issues.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf1f9649" class="outline-3">
+<h3 id="orgf1f9649">Software on Atlas</h3>
+<div class="outline-text-3" id="text-orgf1f9649">
+</div>
+<div id="outline-container-org4e6f860" class="outline-4">
+<h4 id="org4e6f860">Environment Modules</h4>
+<div class="outline-text-4" id="text-org4e6f860">
+<p>
+<a href="https://lmod.readthedocs.io/en/latest/">LMOD</a>, an environment module system, is used to manage which software installed
+on Atlas is accessible to you. By using the various <code>module</code> commands, you can add
+and remove software from your shell environment. Environment modules allow you
+to easily select which version of software you want to use from among multiple
+installed versions of the software. So long as a version remains installed, you
+can always use an older version by specifying the version when you load the
+software. The list below explains common <code>module</code> commands.
+</p>
+
+<dl class="org-dl">
+<dt><code>module list</code></dt><dd>Lists currently loaded modules in your environment</dd>
+<dt><code>module avail</code></dt><dd>Lists modules that you can load</dd>
+<dt><code>module spider</code></dt><dd>List all modules, including those that require you to load
+some prerequisite module</dd>
+<dt><code>module load [module]</code></dt><dd>Loads a module into your environment</dd>
+<dt><code>module unload [module]</code></dt><dd>Removes a module from your environment</dd>
+<dt><code>module swap [module] [module]</code></dt><dd>Replaces the first provided module with the
+second</dd>
+<dt><code>module help [module]</code></dt><dd>Provides information about the module</dd>
+</dl>
+
+<p>
+In addition to the <code>module</code> commands, there is a shorter form using <code>ml</code>. Any
+command of the form <code>module command</code> can be replaced with <code>ml command</code>, but there
+are a few shortcuts provided by <code>ml</code>.
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-bottom"><span class="table-number">Table 4:</span> <code>module</code> vs <code>ml</code></caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left"><code>module command</code></th>
+<th scope="col" class="org-left"><code>ml command</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left"><code>module list</code></td>
+<td class="org-left"><code>ml</code></td>
+</tr>
+
+<tr>
+<td class="org-left"><code>module load module_name</code></td>
+<td class="org-left"><code>ml module_name</code></td>
+</tr>
+
+<tr>
+<td class="org-left"><code>module unload module_name</code></td>
+<td class="org-left"><code>ml -module_name</code></td>
+</tr>
+</tbody>
+</table>
+<p>
+The <code>ml</code> commands for loading and unloading software can be combined. For example,
+you can use <code>ml module1 -module2</code> to load <code>module1</code> and unload <code>module2</code>, rather than
+using <code>ml load</code> and <code>ml unload</code>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgcad0f36" class="outline-4">
+<h4 id="orgcad0f36">Containers</h4>
+<div class="outline-text-4" id="text-orgcad0f36">
+<p>
+Some software on Atlas is available via <b>containers</b>, which are packages of
+software that contain all of the code and dependencies necessary for the
+contained application to run in any environment. Software installed as a
+container can be seen in the list provided by <code>ml spider</code>. To see software
+installed as a container with <code>ml avail</code>, run <code>ml singularity</code> before running <code>ml
+avail</code>.
+</p>
+
+<p>
+In addition to the containers installed on Atlas, there are repositories, such
+as <a href="https://quay.io/organization/biocontainers">biocontainers</a>, that provide pre-built containers for commonly used software
+in a field. Downloading these containers can be simpler than downloading
+software and its dependencies and compiling it from source, since you may run
+into permission or compatibility issues that containers avoid.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgded7862" class="outline-3">
+<h3 id="orgded7862">Jobs on Atlas</h3>
+<div class="outline-text-3" id="text-orgded7862">
+</div>
+<div id="outline-container-org667fc37" class="outline-4">
+<h4 id="org667fc37">Requesting Resources and Running Jobs</h4>
+<div class="outline-text-4" id="text-org667fc37">
+<p>
+Atlas uses the Slurm Workload Manager as a scheduler and resource manager. Users
+either request resources and run interactive tasks or submit jobs to the queue.
+Both actions are done from one of the login nodes. When specifying the resources
+needed, users must specify the name of an account associated with their project.
+The following command will show you which accounts you may use.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+sacctmgr show associations where user=$USER format=account%20,qos%50
+</code>
+</pre>
+</div>
+
+<p>
+Users likely want to specify other options as well, such as the amount of RAM or
+the number of CPUs. If you don&rsquo;t specify, then your job runs with default
+parameters: 1 node using 1 core. To request resources for an interactive job,
+use the <code>salloc</code> command to request resources and then use those resources with
+<code>srun</code>. Resources for a non-interactive job submitted to the queue can be
+requested during the submission, either as part of the <code>sbatch</code> command or in the
+submitted script.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org95e5472" class="outline-4">
+<h4 id="org95e5472">Job Arrays</h4>
+<div class="outline-text-4" id="text-org95e5472">
+<p>
+Job arrays are a mechanism for managing a set of jobs that have identical
+resource requirements. For example, imagine that you have the following data.
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-bottom"><span class="table-number">Table 5:</span> Example Data Description</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Sample</th>
+<th scope="col" class="org-left">File</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">Sample One</td>
+<td class="org-left">sample1.fastq</td>
+</tr>
+
+<tr>
+<td class="org-left">Sample Two</td>
+<td class="org-left">sample2.fastq</td>
+</tr>
+
+<tr>
+<td class="org-left">Sample Three</td>
+<td class="org-left">sample3.fastq</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+In this case, you want to perform some task--for example, quality checking--on
+each sample independently. You could write three separate scripts that are
+exactly the same, except for which sample is being checked, or you could use a
+job array. When you submit a job to the queue, you can use <code>--array</code> and a range
+of numbers to specify that, for every job in the job array, the same resources
+should be requested and the same tasks executed. In this case, we could specify
+<code>--array 0-2</code>. Then, rather than specifying the name of the file to be checked by
+our quality assurance task, we can specify that the file checked should be the
+the n<sup>th</sup> item from the beginning of our list of data, where <i>n</i> is the job array
+number. <code>sample1.fastq</code> is the zeroth item from the beginning; <code>sample2.fastq</code> is
+the first item from the beginning; <code>sample3.fastq</code> is the second item from the
+beginning.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4144432" class="outline-3">
+<h3 id="org4144432">Example</h3>
+<div class="outline-text-3" id="text-org4144432">
+</div>
+<div id="outline-container-org86315b1" class="outline-4">
+<h4 id="org86315b1">Overview</h4>
+<div class="outline-text-4" id="text-org86315b1">
+<ul class="org-ul">
+<li>adapted from the COMBINE lab&rsquo;s tutorial<sup><a id="fnr.2" class="footref" href="#fn.2" role="doc-backlink">2</a></sup></li>
+<li>download data</li>
+<li>use <code>srun</code> to run one step of an analysis</li>
+<li>use <code>sbatch</code> to submit a job array to run the second step of the analysis
+several times on different data</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org9c41a4a" class="outline-4">
+<h4 id="org9c41a4a">Download Data</h4>
+<div class="outline-text-4" id="text-org9c41a4a">
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+mkdir /home/user.name/training
+cd /home/user.name/training/
+
+curl ftp://ftp.ensemblgenomes.org/pub/plants/release-28/fasta/arabidopsis_thaliana/cdna/Arabidopsis_thaliana.TAIR10.28.cdna.all.fa.gz -o athal.fa.gz
+
+chmod +x download_data.sh
+./download_data.sh
+</code>
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>make directory <code>/home/user.name/training/</code></li>
+<li>change directory to <code>/home/user.name/training/</code></li>
+<li>download the a reference file from a URL and save it as <code>athal.fa.gz</code></li>
+<li>make sure the <code>download_data.sh</code> script is executable</li>
+<li>run the download script (provided below)</li>
+</ul>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+cd /home/user.name/training/
+for i in `seq 25 40`; do
+  mkdir -p data/DRR0161${i};
+  wget -P data/DRR0161${i} ftp://ftp.sra.ebi.ac.uk/vol1/fastq/DRR016/DRR0161${i}/DRR0161${i}_1.fastq.gz;
+  wget -P data/DRR0161${i} ftp://ftp.sra.ebi.ac.uk/vol1/fastq/DRR016/DRR0161${i}/DRR0161${i}_2.fastq.gz;
+done
+</code>
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>change directory to <code>/home/user.name/training/</code></li>
+<li>for all numbers <i>i</i> from 25 to 40
+<ul class="org-ul">
+<li>make a directory <code>data/DRR0161</code> + <i>i</i></li>
+<li>download two files to that directory, replace <i>i</i> with the appropriate number
+from 25 to 40 to build the URL</li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org44928b4" class="outline-4">
+<h4 id="org44928b4">Indexing Transcriptome</h4>
+<div class="outline-text-4" id="text-org44928b4">
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+salloc -A sandbox
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-output">
+salloc: Granted job allocation 292472
+salloc: Waiting for resource configuration
+salloc: Nodes Atlas-0042 are ready for job
+</code>
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>request default allocation using scinet account
+<ul class="org-ul">
+<li>nodes: 1 node</li>
+<li>number of tasks: 1 core</li>
+</ul></li>
+</ul>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+#!/usr/bin/env bash
+
+cd /home/user.name/training/
+hostname
+ml singularity salmon/1.3.0--hf69c8f4_0
+salmon index -t athal.fa.gz -i athal_index
+</code>
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>change to training directory</li>
+<li>print the hostname to show that the command is being run on compute node and
+not the login node</li>
+<li>load <code>singularity</code> module and <code>salmon</code> module
+<ul class="org-ul">
+<li><code>salmon</code> module is accessible as a container, so <code>singularity</code> has to be loaded
+first</li>
+</ul></li>
+<li>run <code>salmon</code> command</li>
+</ul>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+srun /home/user.name/training/index.sh
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-output">
+Atlas-0042.HPC.MsState.Edu
+WARNING: Skipping mount /apps/singularity-3/singularity-3.7.1/var/singularity/mnt/session/etc/resolv.conf [files]: /etc/resolv.conf doesn't exist in container
+index ["athal_index"] did not previously exist  . . . creating it
+...
+</code>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5c6bb22" class="outline-4">
+<h4 id="org5c6bb22">Running Salmon as a Job Array</h4>
+<div class="outline-text-4" id="text-org5c6bb22">
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+#!/usr/bin/env bash
+#SBATCH --account sandbox           # set correct account
+#SBATCH --nodes=1                   # request one node
+#SBATCH --cpus-per-task=8           # ask for 8 CPUs
+#SBATCH --time=0-00:30:00           # set job time to  30 minutes.
+#SBATCH --array=0-15                # run 16 jobs of this script
+#SBATCH --output=%x.%A_%a.log       # store output as jobname.jobid_arrayid.log
+#SBATCH --error=%x.%A_%a.err        # store output as jobname.jobid_arrayid.err
+#SBATCH --job-name="salmon_run"     # job name that will be shown in the queue
+
+declare -A rna_files
+rna_files['DRR016125']='data/DRR016125/DRR016125_1.fastq.gz data/DRR016125/DRR016125_2.fastq.gz'
+rna_files['DRR016126']='data/DRR016126/DRR016126_1.fastq.gz data/DRR016126/DRR016126_2.fastq.gz'
+rna_files['DRR016127']='data/DRR016127/DRR016127_1.fastq.gz data/DRR016127/DRR016127_2.fastq.gz'
+rna_files['DRR016128']='data/DRR016128/DRR016128_1.fastq.gz data/DRR016128/DRR016128_2.fastq.gz'
+rna_files['DRR016129']='data/DRR016129/DRR016129_1.fastq.gz data/DRR016129/DRR016129_2.fastq.gz'
+rna_files['DRR016130']='data/DRR016130/DRR016130_1.fastq.gz data/DRR016130/DRR016130_2.fastq.gz'
+rna_files['DRR016131']='data/DRR016131/DRR016131_1.fastq.gz data/DRR016131/DRR016131_2.fastq.gz'
+rna_files['DRR016132']='data/DRR016132/DRR016132_1.fastq.gz data/DRR016132/DRR016132_2.fastq.gz'
+rna_files['DRR016133']='data/DRR016133/DRR016133_1.fastq.gz data/DRR016133/DRR016133_2.fastq.gz'
+rna_files['DRR016134']='data/DRR016134/DRR016134_1.fastq.gz data/DRR016134/DRR016134_2.fastq.gz'
+rna_files['DRR016135']='data/DRR016135/DRR016135_1.fastq.gz data/DRR016135/DRR016135_2.fastq.gz'
+rna_files['DRR016136']='data/DRR016136/DRR016136_1.fastq.gz data/DRR016136/DRR016136_2.fastq.gz'
+rna_files['DRR016137']='data/DRR016137/DRR016137_1.fastq.gz data/DRR016137/DRR016137_2.fastq.gz'
+rna_files['DRR016138']='data/DRR016138/DRR016138_1.fastq.gz data/DRR016138/DRR016138_2.fastq.gz'
+rna_files['DRR016139']='data/DRR016139/DRR016139_1.fastq.gz data/DRR016139/DRR016139_2.fastq.gz'
+rna_files['DRR016140']='data/DRR016140/DRR016140_1.fastq.gz data/DRR016140/DRR016140_2.fastq.gz'
+
+declare -a samples=( 'DRR016125' 'DRR016126' 'DRR016127' 'DRR016128' 'DRR016129' 'DRR016130' 'DRR016131' 'DRR016132' 'DRR016133' 'DRR016134' 'DRR016135' 'DRR016136' 'DRR016137' 'DRR016138' 'DRR016139' 'DRR016140' )
+
+cd /home/user.name/training/
+
+ml singularity salmon/1.3.0--hf69c8f4_0
+
+SAMPLE=${samples[$SLURM_ARRAY_TASK_ID]}
+read -a FILES &lt;&lt;&lt; ${rna_files[$SAMPLE]}
+
+salmon quant -i athal_index -l A \
+       -1 ${FILES[0]} \
+       -2 ${FILES[1]} \
+       -p $SLURM_CPUS_PER_TASK --validateMappings \
+       -o quants/$SAMPLE
+</code>
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>SBATCH directives</li>
+<li>set up RNA files</li>
+<li>set up sample names</li>
+<li>change to the correct directory</li>
+<li>load <code>singularity</code> and <code>salmon</code></li>
+<li>get sample from <code>$SLURM_ARRAY_TASK_ID</code></li>
+<li>get reads from <code>$rna_files</code></li>
+<li>run <code>salmon</code></li>
+</ul>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+sbatch salmon-run.sh
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-output">
+Submitted batch job 292484
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+squeue --me
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-output">
+      JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+ 292484_0     atlas salmon_r user.nam  R       0:03      1 Atlas-0047
+ 292484_1     atlas salmon_r user.nam  R       0:03      1 Atlas-0051
+ 292484_2     atlas salmon_r user.nam  R       0:03      1 Atlas-0060
+ 292484_3     atlas salmon_r user.nam  R       0:03      1 Atlas-0067
+ 292484_4     atlas salmon_r user.nam  R       0:03      1 Atlas-0074
+ 292484_5     atlas salmon_r user.nam  R       0:03      1 Atlas-0076
+ 292484_6     atlas salmon_r user.nam  R       0:03      1 Atlas-0079
+ 292484_7     atlas salmon_r user.nam  R       0:03      1 Atlas-0083
+ 292484_8     atlas salmon_r user.nam  R       0:03      1 Atlas-0131
+ 292484_9     atlas salmon_r user.nam  R       0:03      1 Atlas-0136
+292484_10     atlas salmon_r user.nam  R       0:03      1 Atlas-0144
+292484_11     atlas salmon_r user.nam  R       0:03      1 Atlas-0146
+292484_12     atlas salmon_r user.nam  R       0:03      1 Atlas-0149
+292484_13     atlas salmon_r user.nam  R       0:03      1 Atlas-0152
+292484_14     atlas salmon_r user.nam  R       0:03      1 Atlas-0156
+292484_15     atlas salmon_r user.nam  R       0:03      1 Atlas-0158
+</code>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5970f2f" class="outline-3">
+<h3 id="org5970f2f">Getting Help</h3>
+<div class="outline-text-3" id="text-org5970f2f">
+<p>
+If you&rsquo;re running into issues using Atlas, then you can find answers to your
+questions in several different places.
+</p>
+</div>
+
+<div id="outline-container-org733adf0" class="outline-4">
+<h4 id="org733adf0">Email</h4>
+<div class="outline-text-4" id="text-org733adf0">
+<p>
+If you&rsquo;re having issues related to Atlas itself or software installed on Atlas,
+then you can email <a href="mailto:help-usda@hpc.msstate.edu">HPC2 at Mississippi State University
+(help-usda@hpc.msstate.edu)</a>.
+</p>
+
+<p>
+If your issues are related to your SCINet account, to a project, or to a storage
+quota, you can email <a href="mailto:scinet_vrsc@usda.gov">SCINet Virtual Research Support Core
+(scinet_vrsc@usda.gov)</a>.
+</p>
+
+<p>
+If you aren&rsquo;t sure who might be able to answer your question or if you have
+questions about this document, you can email the author of this document, <a href="mailto:thrash@igbb.msstate.edu">Adam
+Thrash (thrash@igbb.msstate.edu)</a>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org881f34e" class="outline-4">
+<h4 id="org881f34e">Documentation</h4>
+<div class="outline-text-4" id="text-org881f34e">
+<p>
+The <a href="https://scinet.usda.gov/guide/quickstart">SCINet Quick Start</a> contains more detailed guides on specific parts of the
+high-performance computing experience available through SCINet. Some parts of
+the guide may be more specific to Ceres (mainly software version numbers), but
+most parts will be applicable to Atlas as well.
+</p>
+
+<p>
+Additionally, the <a href="https://www.hpc.msstate.edu/computing/atlas/">Atlas documentation</a> covers topics specific to Atlas in detail,
+including Atlas Open OnDemand, a web interface for the Atlas cluster.
+</p>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf151cce" class="outline-2">
+<h2 id="orgf151cce">Exercise</h2>
+<div class="outline-text-2" id="text-orgf151cce">
+</div>
+<div id="outline-container-org690afc2" class="outline-3">
+<h3 id="org690afc2">Logging In</h3>
+<div class="outline-text-3" id="text-org690afc2">
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+ssh user.name-login.hpc.msstate.edu
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-output">
+​*​*​*​*​*​*​*​*​*​* N O T I C E ​*​*​*​*​*​*​*​*​*​*
+
+This system is under the control of and/or the property of Mississippi State
+University (MSU).  It is for authorized use only.  By using this system, all
+users acknowledge notice of and agree to comply with all MSU and High
+Performance Computing Collaboratory (HPC2) policies governing use of
+information systems.
+
+Any use of this system and all files on this system may be intercepted,
+monitored, recorded, copied, audited, inspected, and disclosed to authorized
+university and law enforcement personnel, as well as authorized individuals of
+other organizations.  By using this system, the user consents to such
+interception, monitoring, recording, copying, auditing, inspection and
+disclosure at the discretion of authorized university personnel.
+
+Unauthorized, improper or negligent use of this system may result in
+administrative disciplinary action, up to and including termination, civil
+charges, criminal penalties, and/or other sanctions as determined by applicable
+law, MSU policies, HPC2 policies, law enforcement or other authorized State
+and Federal agencies.
+
+​*​*​*​*​*​*​*​*​*​* N O T I C E ​*​*​*​*​*​*​*​*​*​*
+
+(user.name@atlas-login.hpc.msstate.edu) Verification code:
+(user.name@atlas-login.hpc.msstate.edu) Password:
+</code>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6c62fdf" class="outline-3">
+<h3 id="org6c62fdf">Directories</h3>
+<div class="outline-text-3" id="text-org6c62fdf">
+</div>
+<div id="outline-container-org11e0627" class="outline-4">
+<h4 id="org11e0627">Show Current Directory</h4>
+<div class="outline-text-4" id="text-org11e0627">
+<p>
+<code>pwd</code> prints the current working directory. It&rsquo;s useful for figuring out where you
+are.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+pwd
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-output">
+/home/user.name
+</code>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc3de256" class="outline-4">
+<h4 id="orgc3de256">Changing Directories</h4>
+<div class="outline-text-4" id="text-orgc3de256">
+<p>
+In this example, the working directory is the user&rsquo;s home folder.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+pwd
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-output">
+/home/user.name
+</code>
+</pre>
+</div>
+
+<p>
+Using <code>cd</code>, you can change to a different directory. <code>cd</code> doesn&rsquo;t produce any output
+to confirm that you changed directories.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+cd /90daydata/shared/
+pwd
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-output">
+/90daydata/shared/
+</code>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc09e920" class="outline-4">
+<h4 id="orgc09e920">Creating Directories</h4>
+<div class="outline-text-4" id="text-orgc09e920">
+<p>
+Use <code>mkdir</code> to create new directories. By default, <code>mkdir</code> will produces errors if
+you try to create nested directories when the full path doesn&rsquo;t exist or if you
+try to create an already existing directory.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+mkdir exercise/test
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-output">
+mkdir: cannot create directory ‘exercise/test’: No such file or directory
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+mkdir exercise
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+mkdir exercise
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-output">
+mkdir: cannot create directory ‘exercise’: File exists
+</code>
+</pre>
+</div>
+
+<p>
+However, <code>mkdir -p</code> will handle both of these issues.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+# -p - no error if existing, make parent directories as needed
+mkdir -p exercise
+</code>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org10c2319" class="outline-4">
+<h4 id="org10c2319">Listing Directory Contents</h4>
+<div class="outline-text-4" id="text-org10c2319">
+<p>
+By default, <code>ls</code> shows the contents of the current working directory in a grid.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+ls
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-output">
+exercise
+</code>
+</pre>
+</div>
+
+<p>
+Use <code>ls -lh</code> (or <code>ls -l -h</code>) to show them in a tabular format (<code>-l</code>) with
+human-readable size-information (<code>-h</code>).
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+ls -lh
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-output">
+total 44K
+drwxr-x--- 2 user.name user.name    10 Sep 20  2022 Desktop
+drwx------ 3 user.name user.name    49 Feb 22 08:48 Downloads
+drwxrwx--- 2 user.name user.name    10 May 24 10:43 exercise
+</code>
+</pre>
+</div>
+
+<p>
+Use <code>a</code> to show all files, including hidden files.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+ls -lha
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-output">
+total 220K
+drwxr-xr-x   23 user.name user.name  4.0K May 24 10:43 .
+drwxr-xr-x 2070 root      root       72K  May 19 18:02 ..
+-rw-r-----    1 user.name user.name  2.4K Mar  9 11:19 .bashrc
+drwxrwx---    2 user.name user.name    10 May 24 10:43 exercise
+</code>
+</pre>
+</div>
+
+<p>
+Provide a path to show the contents of that directory instead of the contents of
+the current directory.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+ls -lha exercise/
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-output">
+total 0
+drwxrwx--- 3 user.name user.name 24 May 24 13:02 test
+</code>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2fc147c" class="outline-4">
+<h4 id="org2fc147c">Remove Directories</h4>
+<div class="outline-text-4" id="text-org2fc147c">
+<p>
+You can use <code>rm</code> to remove files or directories. By default, <code>rm</code> will not remove
+directories. Files and directories removed with <code>rm</code> are <b>gone</b>, so be very careful
+when you use <code>rm</code> to remove something, as you cannot recover it.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+rm exercise
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-output">
+rm: cannot remove ‘exercise/’: Is a directory
+</code>
+</pre>
+</div>
+
+<p>
+<code>rm -d</code> will remove empty directories.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+# -d, --dir - remove empty directories
+rm -d exercise
+</code>
+</pre>
+</div>
+
+<p>
+<code>rm -r</code> will remove directories and their contents.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+mkdir -p exercise/
+# -r, -R, --recursive - remove directories and their contents recursively
+rm -r exercise
+</code>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga69d45d" class="outline-3">
+<h3 id="orga69d45d">Creating Files</h3>
+<div class="outline-text-3" id="text-orga69d45d">
+</div>
+<div id="outline-container-org85809ad" class="outline-4">
+<h4 id="org85809ad">On Your Computer</h4>
+<div class="outline-text-4" id="text-org85809ad">
+<p>
+You can use programming text editors such as <a href="http://www.sublimetext.com">Sublime Text</a> or <a href="https://code.visualstudio.com">VS Code</a> to create
+scripts on your computer. Once you&rsquo;ve created a script, you can use <a href="https://www.globus.org/globus-connect-personal">Globus
+Personal Connect</a> to upload your script via <a href="https://app.globus.org">the Globus web interface</a>.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+#!/usr/bin/env bash
+echo "Hello, world!"
+</code>
+</pre>
+</div>
+
+<p>
+You can also use <code>scp</code>.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+scp hello.sh user.name@atlas-login.hpc.msstate.edu:/home/user.name/hello.sh
+</code>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2c19c3e" class="outline-4">
+<h4 id="org2c19c3e">Creating a File on Atlas</h4>
+<div class="outline-text-4" id="text-org2c19c3e">
+You can use <code>nano</code> to create a file. Once you've written the contents of the file, you can press <kbd>Ctrl</kbd> + <kbd>x</kbd> to quit/write from <code>nano</code>.
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+nano hello.sh
+</code>
+</pre>
+</div>
+
+<p>
+Copy and paste the contents of this file into <code>nano</code>.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+#!/usr/bin/env bash
+echo "Hello, world!"
+</code>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org81848a7" class="outline-3">
+<h3 id="org81848a7">Scripting</h3>
+<div class="outline-text-3" id="text-org81848a7">
+</div>
+<div id="outline-container-org28608c3" class="outline-4">
+<h4 id="org28608c3">Running Scripts</h4>
+<div class="outline-text-4" id="text-org28608c3">
+<p>
+You can execute a script by calling the interpreter with the script name as an
+argument.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+bash hello.sh
+</code>
+</pre>
+</div>
+
+<p>
+If the script is executable, you can call it using its path.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-nil">
+./hello.sh
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+/home/user.name/hello.sh
+</code>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1cf23cc" class="outline-4">
+<h4 id="org1cf23cc">Shebang</h4>
+<div class="outline-text-4" id="text-org1cf23cc">
+<p>
+The shebang specifies what interpreter the machine should use to execute a
+script. While the full path to an interpreter can be provided, as seen in the
+first example, using <code>#!/usr/bin/env interpreter_name</code>, where <code>interpreter_name</code> is
+the name of an interpreter as seen in the other examples, is a better practice.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+#!/bin/bash
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+#!/usr/bin/env bash
+</code>
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+#!/usr/bin/env python3
+</code>
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+#!/usr/bin/env Rscript
+</code>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0aa48ef" class="outline-4">
+<h4 id="org0aa48ef">Variables</h4>
+<div class="outline-text-4" id="text-org0aa48ef">
+<p>
+In Bash scripts, variables are created by specifying a variable name, followed
+by an equals sign, followed by the value of the variable. For example, the
+following example prints, &ldquo;Hello, world&rdquo;, replacing the <code>$NAME</code> variable with its
+value when it executes. (<code>echo</code> is a command that prints text to your screen.)
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+#!/usr/bin/env bash
+NAME="world"
+echo "Hello, $NAME"
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-output">
+Hello, world
+</code>
+</pre>
+</div>
+
+<p>
+<code>$1</code>, <code>$2</code>, <code>$3</code>, etc can be used in scripts to access command-line arguments.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+echo "Hello, $1"
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+./hello.sh "world"
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-output">
+Hello, world
+</code>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge25b5fa" class="outline-3">
+<h3 id="orge25b5fa">Jobs</h3>
+<div class="outline-text-3" id="text-orge25b5fa">
+</div>
+<div id="outline-container-org49bf27e" class="outline-4">
+<h4 id="org49bf27e">Resource Allocation</h4>
+<div class="outline-text-4" id="text-org49bf27e">
+<dl class="org-dl">
+<dt>-N</dt><dd>number of nodes needed</dd>
+<dt>--mem</dt><dd>amount of RAM needed per node</dd>
+<dt>-n</dt><dd>number of cores needed per node</dd>
+<dt>--time</dt><dd>amount of time needed per node</dd>
+<dt>--account</dt><dd>the account associated with the job</dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-org32e1dec" class="outline-4">
+<h4 id="org32e1dec">Running Interactively</h4>
+<div class="outline-text-4" id="text-org32e1dec">
+<p>
+An account is required to request resources, though other arguments can be added
+to the request.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+salloc -A sandbox &lt;any other arguments&gt;
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-output">
+salloc: Granted job allocation 292472
+salloc: Waiting for resource configuration
+salloc: Nodes Atlas-0042 are ready for job
+</code>
+</pre>
+</div>
+
+<p>
+Using the <code>hostname</code> command to see the name of the machine on which the command
+was executed, you can confirm that <code>srun</code> is running on the node allocated above.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+hostname      # should display the login node
+srun hostname # should display a compute node
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-output">
+Atlas-login-1.HPC.MsState.Edu
+Atlas-0042.HPC.MsState.Edu
+</code>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org818e7db" class="outline-4">
+<h4 id="org818e7db">Submitting to the Queue</h4>
+<div class="outline-text-4" id="text-org818e7db">
+<p>
+<code>#SBATCH</code> directives allow you to specify what kind of resources you need in the
+script you submit to the queue instead of specifying them on the command line.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+#!/usr/bin/env bash
+#SBATCH --account=sandbox   # set correct account
+#SBATCH --nodes=1           # request one node
+#SBATCH --cpus-per-task=8   # ask for 8 CPUs
+#SBATCH --time=0-00:30:00   # set job time to  30 minutes.
+#SBATCH --output=%x.%A.log  # store output as jobname.jobid.log
+#SBATCH --error=%x.%A.err   # store output as jobname.jobid.err
+#SBATCH --job-name="demo"   # job name that will be shown in the queue
+
+hostname
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+sbatch hostname.sh
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-output">
+Submitted batch job 292484
+</code>
+</pre>
+</div>
+
+<p>
+<code>cat</code> can be used to print the contents of files. In this case, printing the
+output log shows the output of the script, which should be the hostname of the
+node on which the script ran.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+cat exercise_4.292484.log
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-output">
+Atlas-0040.HPC.MsState.Edu
+</code>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org35316c4" class="outline-3">
+<h3 id="org35316c4">Test Your Knowledge</h3>
+<div class="outline-text-3" id="text-org35316c4">
+</div>
+<div id="outline-container-orga7d2e26" class="outline-4">
+<h4 id="orga7d2e26">Goal</h4>
+<div class="outline-text-4" id="text-orga7d2e26">
+<p>
+The goal of this exercise is to put everything in the above examples together
+together in order to run an executable on an Atlas node. The executable&rsquo;s path
+will be provided below. The executable will fail to run
+</p>
+
+<ul class="org-ul">
+<li>if it is run anywhere but an Atlas node</li>
+<li>if you don&rsquo;t have permission to write to the executable&rsquo;s location</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org476188d" class="outline-4">
+<h4 id="org476188d">Instructions</h4>
+<div class="outline-text-4" id="text-org476188d">
+<ul class="org-ul">
+<li>log in</li>
+<li>make a directory somewhere like <code>/home/user.name/exercise</code></li>
+<li>copy the executable using the <code>cp</code> command
+<ul class="org-ul">
+<li><code>cp /home/user.name/SRE/exercise/atlas_exercise /home/user.name/exercise</code></li>
+</ul></li>
+<li>create a script that runs the executable
+<dl class="org-dl">
+<dt>with full path</dt><dd><code>/home/user.name/exercise/atlas_exercise</code></dd>
+<dt>with relative path from <code>/home/user.name/exercise</code> directory</dt><dd><code>./atlas_exercise</code></dd>
+</dl></li>
+<li>submit the script to Atlas with <code>sbatch</code> or use <code>salloc</code> and <code>srun</code></li>
+<li>check for the file <code>exercise.txt</code> in the directory you created with the contents below
+<ul class="org-ul">
+<li>You have successfully run the executable on an Atlas node!</li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge6b6646" class="outline-3">
+<h3 id="orge6b6646">Solution</h3>
+<div class="outline-text-3" id="text-orge6b6646">
+<button class="accordion">Show Solution</button>
+<div class="panel">
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+ssh user.name@atlas-login.hpc.msstate.edu
+mkdir -p $HOME/exercise/
+cp /home/user.name/SRE/exercise/atlas_exercise $HOME/exercise
+cd $HOME/exercise/
+chmod +x atlas_exercise
+sbatch exercise.sh
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+#!/usr/bin/env bash
+#SBATCH --account sandbox   # set correct account
+#SBATCH --output=%x.%A.log  # store output as jobname.jobid.log
+#SBATCH --error=%x.%A.err   # store output as jobname.jobid.err
+#SBATCH --job-name="exercise"   # job name that will be shown in the queue
+
+./atlas_exercise
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+ls -lh
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-output">
+total 5.5M
+drwxrwx---  2 user.name user.name  149 Jun  6 10:23 .
+drwxr-xr-x 23 user.name user.name 4.0K Jun  6 10:21 ..
+-r-xr-x---  1 user.name user.name 5.5M Jun  6 10:22 atlas_exercise
+-rw-rw----  1 user.name user.name    0 Jun  6 10:23 exercise.12212806.err
+-rw-rw----  1 user.name user.name    0 Jun  6 10:23 exercise.12212806.log
+-rw-rw----  1 user.name user.name  291 Jun  6 10:22 exercise.sh
+-rw-rw----  1 user.name user.name   59 Jun  6 10:23 exercise.txt
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+cat exercise.txt
+</code>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-output">
+You have successfully run the executable on an Atlas node!
+</code>
+</pre>
+</div>
+
+</div>
+<script>
+var acc = document.getElementsByClassName("accordion");
+var i;
+
+for (i = 0; i < acc.length; i++) {
+  acc[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    if (this.classList.contains("active")) {
+      this.innerText = "Hide Solution"
+    } else {
+      this.innerText = "Show Solution"
+    };
+
+    var panel = this.nextElementSibling;
+    if (panel.style.display === "block") {
+      panel.style.display = "none";
+    } else {
+      panel.style.display = "block";
+    }
+  });
+}
+</script>
+</div>
+</div>
+</div>
+<div id="outline-container-orgf64faa7" class="outline-2">
+<h2 id="orgf64faa7">Commands Used in Workshop</h2>
+<div class="outline-text-2" id="text-orgf64faa7">
+<p>
+The following commands were run during the afternoon session of the Introduction
+to Atlas workshop. Some of this information is duplicated above, and some of
+these commands may not be commands you find useful.
+</p>
+</div>
+
+<div id="outline-container-org8a18883" class="outline-3">
+<h3 id="org8a18883">Printing Working Directory</h3>
+<div class="outline-text-3" id="text-org8a18883">
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+pwd
+</code>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org73e9d84" class="outline-3">
+<h3 id="org73e9d84">Change Directories</h3>
+<div class="outline-text-3" id="text-org73e9d84">
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+cd                       # returns you to your home directory
+cd ../                   # moves you up one level
+cd /90daydata/
+cd /90daydata/shared/
+cd /90daydata/shared/user.name/
+cd /90daydata/shared/user.name/exercise/
+</code>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6af200f" class="outline-3">
+<h3 id="org6af200f">Making Directories</h3>
+<div class="outline-text-3" id="text-org6af200f">
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+mkdir user.name              # make a directory
+mkdir -p user.name/exercise/ # make a directory, creating all directories needed and ignoring errors if a directory already exists
+</code>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf270bdf" class="outline-3">
+<h3 id="orgf270bdf">Listing Directory Contents</h3>
+<div class="outline-text-3" id="text-orgf270bdf">
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+ls                             # the most basic option
+ls user.name/                  # view contents of user.name folder
+ls -F                          # displays special characters at the end of a file to provide more information
+ls -l                          # display output in long format
+ls -lh                         # display output in long, human-readable format
+ls -lhF                        # combines -lh with -F
+ls -a                          # show hidden files
+ls -lha | less -S              # comines -lh and -a, pipes into less
+ls -lh .bashrc                 # checks specific file (.bashrc, in this case)
+ls -lh /project/ | grep past   # check a specific directory, then search results for a specific folder
+</code>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc60b476" class="outline-3">
+<h3 id="orgc60b476">Creating Files</h3>
+<div class="outline-text-3" id="text-orgc60b476">
+<p>
+<code>touch</code> creates empty files.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+touch exercise/test
+touch test
+</code>
+</pre>
+</div>
+
+<p>
+<code>nano</code> opens the specified file in an editor in the terminal.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+nano test.py
+nano test.sh
+nano test.sh
+nano .bashrc
+</code>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0ec0c50" class="outline-3">
+<h3 id="org0ec0c50">Removing Files and Directories</h3>
+<div class="outline-text-3" id="text-org0ec0c50">
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+rm test         # removes a file named test
+rm -d exercise/ # removes an empty directory named exercise
+rm -r exercise/ # removes a directory named exercise and all its contents
+</code>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org897de86" class="outline-3">
+<h3 id="org897de86">View File Contents</h3>
+<div class="outline-text-3" id="text-org897de86">
+<p>
+<code>cat</code> prints file contents to the console.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+cat test.sh
+</code>
+</pre>
+</div>
+
+<p>
+<code>less</code> opens a special interface for viewing file contents, which you can exit by
+pressing <code>q</code>. <code>less -S</code> prevents lines from wrapping and allows them to expand to
+the right forever.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+less -S .bashrc
+</code>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgea2e261" class="outline-3">
+<h3 id="orgea2e261">Modules</h3>
+<div class="outline-text-3" id="text-orgea2e261">
+<p>
+<code>ml avail</code> shows which modules are available. <code>ml python/3.9.2</code> loads version 3.9.2
+of the <code>python</code> interpreter.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+ml avail
+ml python/3.9.2
+</code>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga5be7d6" class="outline-3">
+<h3 id="orga5be7d6">Running Various Executable Files</h3>
+<div class="outline-text-3" id="text-orga5be7d6">
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+./atlas_exercise # the program from the exercise
+./test.sh        # uses the interpreter specified in the file's shebang
+./test.py        # uses the interpreter specified in the file's shebang
+./test.sh        # uses the interpreter specified in the file's shebang
+bash test.sh     # uses bash
+sh test.sh       # uses sh
+</code>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga075947" class="outline-3">
+<h3 id="orga075947">SLURM</h3>
+<div class="outline-text-3" id="text-orga075947">
+<p>
+This command from the Atlas documentation lists the accounts you can use to
+request resources.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+sacctmgr show associations where user=$USER format=account%20,qos%50
+</code>
+</pre>
+</div>
+
+<p>
+<code>salloc</code> requests resources according to the parameters you provide.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+salloc -A sandbox
+</code>
+</pre>
+</div>
+
+<p>
+<code>squeue</code> shows queued jobs. <code>squeue --me</code> shows your queued jobs.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+squeue --me
+</code>
+</pre>
+</div>
+
+<p>
+<code>srun</code> runs the script on resources allocated to you.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+srun test.sh
+</code>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6c53f68" class="outline-3">
+<h3 id="org6c53f68">Creating an Alias</h3>
+</div>
+<div id="outline-container-org7120613" class="outline-3">
+<h3 id="org7120613">Ownership, Permissions, and Groups</h3>
+<div class="outline-text-3" id="text-org7120613">
+<p>
+<code>chgrp</code> changes the group of a file. This example changes the group of <code>.bashrc</code> to
+<code>scinet-users</code>.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+chgrp scinet-users .bashrc
+</code>
+</pre>
+</div>
+
+<p>
+<code>chmod</code> changes the permissions of a file. More information can be found <a href="https://www.tutorialspoint.com/unix/unix-file-permission.htm">here</a>.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+chmod g+rwx .bashrc     # give read, write, and execute permissions to the group for .bashrc
+chmod +x atlas_exercise # give execute permissions to user and group for atlas_exercise
+chmod +x test.py        # give execute permissions to user and group for test.py
+chmod +x test.sh        # give execute permissions to user and group for test.py
+chmod +x test.sh        # give execute permissions to user and group for test.py
+</code>
+</pre>
+</div>
+
+<p>
+<code>groups</code> can show to which groups a user belongs.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+groups user.name
+</code>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org91612ec" class="outline-3">
+<h3 id="org91612ec">Interacting with the Terminal</h3>
+<div class="outline-text-3" id="text-org91612ec">
+<p>
+<code>clear</code> removes all content from the screen, though you can possibly scroll up to
+see it again, depending on your terminal.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+clear
+</code>
+</pre>
+</div>
+
+<p>
+<code>exit</code> logs you out of your current shell. If you are logged in to Atlas, it will
+log you out and return to your local shell.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+exit
+</code>
+</pre>
+</div>
+
+<p>
+<code>history</code> shows commands that you have previously typed, assuming your shell is
+configured to retain history. <code>grep</code> searches for the word provided. The &ldquo;|&rdquo;
+character, called &ldquo;pipe&rdquo;, means that you are &ldquo;piping&rdquo; the command of <code>history</code> as
+input to the <code>grep</code> command.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+history | grep sacct
+history | grep source
+</code>
+</pre>
+</div>
+
+<p>
+<code>which</code> shows what command is run when you type the command. Using <code>which</code> is an
+easy way to make sure the program you want is available. For example, if you run
+<code>which python3</code> without first running <code>ml python/3.9.2</code>, you will receive an error.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+which bash
+which python
+which python3
+</code>
+</pre>
+</div>
+
+<p>
+Though not demonstrated in the workshop, you could do something like the <code>ls</code>
+example below. If you put this alias in your <code>.bashrc</code> file, you would be able to
+type <code>ls</code> and get the output of <code>ls -lh</code>.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+alias python=python3
+alias ls="ls -lh"
+</code>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org051daea" class="outline-3">
+<h3 id="org051daea">Getting Help</h3>
+<div class="outline-text-3" id="text-org051daea">
+<p>
+<code>man</code> provides a manual for the requested program. Many programs also have a <code>-h</code>
+option to print their help.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+man ls
+</code>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org938f436" class="outline-3">
+<h3 id="org938f436">Python</h3>
+<div class="outline-text-3" id="text-org938f436">
+<p>
+<code>ml python/3.9.2</code> loads version 3.9.2 of the <code>python</code> interpreter.
+</p>
+
+<div class="org-src-container">
+<pre>
+<code class="lang-shell">
+python          # loads default python interpreter, which is python2
+ml python/3.9.2
+python3         # loads python3 interpreter
+python3 test.py # runs test.py using python3 interpreter
+</code>
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+
+<div class="footdef"><sup><a id="fn.1" class="footnum" href="#fnr.1" role="doc-backlink">1</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
+A. Hatem, D. Bozdağ, A. E. Toland, and Ü. V. Çatalyürek, &ldquo;Benchmarking short sequence mapping tools,&rdquo; <i>BMC Bioinformatics</i>, vol. 14, no. 1, p. 184, Jun. 2013, <a href="https://doi.org/10.1186/1471-2105-14-184">doi:10.1186/1471-2105-14-184</a>.
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.2" class="footnum" href="#fnr.2" role="doc-backlink">2</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
+<a href="https://combine-lab.github.io/salmon/getting_started/">https://combine-lab.github.io/salmon/getting_started/</a>
+</p></div></div>
+
+
+</div>
+</div></div>
+<div id="postamble" class="status">
+<p class="author">Author: Adam Thrash</p>
+<p class="date">Created: 2023-06-08 Thu 16:23</p>
+</div>
+</body>
+</html>
